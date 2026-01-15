@@ -1,1 +1,126 @@
-<h1>Hello, world!</h1>
+<!DOCTYPE html>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autolinker/prism-autolinker.min.js" defer></script>
+<style>
+    :root {
+        --color-1: lightblue;
+        --color-2: rgb(161, 197, 209);
+        --text-color: black;
+        --mention-color: rgb(236, 195, 12);
+    }
+    .intro-page {
+        position: relative;
+        min-width: 100%;
+        min-height: 100%;
+    }
+    .mention {
+        background-color: var(--mention-color);
+    }
+    body {
+        background-color: var(--color-2);
+        font-family: monospace
+    }
+    .info-card {
+        background-color: var(--color-1);
+        border-radius: 50px;
+        padding: 25px;
+        margin: 8px;
+        max-width: 75%;
+        overflow-wrap: anywhere;
+        box-shadow: 5px 5px 5px 5px var(--color-2);
+    }
+    .info-card h1 {
+        border-bottom: dashed;
+    }
+    .left {
+        position: sticky;
+        left: 0;
+    }
+    .right {
+        position: sticky;
+        left: 100%;
+    }
+    .center {
+        position: sticky;
+        left: 50%;
+    }
+
+
+</style>
+<body>
+    <div class="intro-page">
+        <div class="info-card left">
+        <h1>Hi, i'm <span class="mention">@moakdoge</span></h1>
+        <h2 id="description">
+    I'm a %s year old dev who <i>kinda</i> knows how to program.
+I overly contemplate why I decided to get into this hellhole of a hobby,
+And how to fix <span style="color: red !important">THAT DAMN ERROR.</span> </h2>
+        </div>
+        <div class="info-card right">
+            <h1>so... why do these have titles?</h1>
+            <h2>    I primarily program in Python. 99% of my projects die within the first
+13 minutes of creation. I am an active member of Vex's V5 competition program.</h2>
+        </div>
+
+        <div class="info-card left">     
+            <h1>
+                seriously. just read the damn text.
+            </h1>
+            <h2>
+            If you couldn't tell from this amazing site, I'm not a front end developer.
+I primarily do random shitpost projects and create tools that will be useful to
+maybe 6 people ever.
+            </h2>
+        </div>
+
+        <div class="info-card right">
+            <h1>woo.. more about me</h1>
+            <h2>
+                    I'm fully self taught and believe in FOSS + free education for everyone. 
+All of my totally amazing projects are open source on my <a href="https://github.com/moakdoge">github</a>.
+Ya know, in case you want to see my dogshit code.
+            </h2>
+        </div>
+
+
+
+        </h2></pre></div>
+        <div class="info-card">
+        <h1>about_me.py</h1>
+        <pre><code class="language-python">
+MY_LANGUAGES = {
+    "Python": "Since 2022",
+    "C++": "Since 2025",
+    "C": "Since 2025",
+    "Lua/Luau": "Since 2020"
+}
+
+def list_socials():
+    YOUTUBE_LINK ="https://www.youtube.com/@moakdoge" # @moakdoge
+    REDDIT_LINK = "https://www.reddit.com/user/Frograbbit1/" # @Frograbbit1
+    GITHUB_LINK = "https://github.com/moakdoge"# @moakdoge
+
+def list_projects():
+    PROJECTS = {
+        "chat-site (TSC)" : {
+            "Lasted": "3 months",
+            "Source": "https://github.com/moakdoge/fast-api-chat" # moakdoge/fast-api-chat
+            "Languages": ["Python", "HTML", "CSS", "JavaScript"]
+        }
+    }
+if __name__ == "__main__":
+    list_socials()
+        </code></pre>
+        </div>
+    </div>
+
+    <script>
+        const start = new Date("2010-03-17");
+        document.getElementById("description").innerHTML = document.getElementById("description").innerHTML.replace("%s", Math.floor((Date.now() - start)  / 3.15576e10))
+    </script>
+</body>
