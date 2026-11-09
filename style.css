@@ -1,0 +1,60 @@
+:root {
+    --background-color: #000000;
+    --text-color: #00ff22;
+    --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
+}
+html, body {
+    background: var(--background-color);
+    width: 100%;
+    height: 100%;
+    font-family: var(--font);
+}
+
+.term-log {
+    display: flex;
+    width: 90%;
+    min-height: 90%;
+    align-items: flex-start;
+    flex-direction: column;
+
+}
+
+.log {
+    width: fit-content;
+    height: fit-content;
+}
+.content {
+    color: var(--text-color);
+}
+
+.prompt {
+    color: var(--text-color);
+    padding: 0px;
+}
+.command-box {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font: inherit;
+    appearance: none;
+    border: none;
+    outline: none;
+    width: 1ch;
+    padding: 0;
+}
+
+.command-text {
+    text-decoration: underline;
+    color: red;
+}
+
+.link  {
+    
+}
+
+.command-text:hover {
+    cursor: pointer
+}
+
+.command-box:focus {
+    cursor: none;
+}
