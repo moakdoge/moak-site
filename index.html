@@ -148,7 +148,6 @@
         registerStupidCommand("cat", "I don't have any files, how would cat even work?");
         registerStupidCommand("apt", "This is not Ubuntu!");
         registerStupidCommand("pacman", "This is not Arch! (i use arch btw)");
-        registerStupidCommand("yay", "This is not Arch! (i use arch btw)");
         registerStupidCommand("dnf", "This is not Fedora!");
         registerStupidCommand("zypper", "This is not openSUSE!");
         registerStupidCommand("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
@@ -165,6 +164,11 @@
         registerStupidCommand("kill", "Can't kill anything here, bucko.");
         registerStupidCommand("chmod", "No files to own. Do not know why you're trying.");
         registerStupidCommand("ping", "Go do ping on your own terminal.");
+        registerStupidCommand("arknight", "rose12344 made me add this. You know who you are.");
+        aliasCommand("arknights", "arknight");
+        aliasCommand("neofetch", "fastfetch");
+        aliasCommand("yay", "pacman");
+        aliasCommand("apt-get", "apt");
 
         registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", function (args) {
             let newHostName = args[1];

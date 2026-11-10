@@ -22,6 +22,8 @@ class MainCommand {
         this.author = author;
         this.callback = callback;
         this.hidden = hidden;
+        /* @type {string[]} */
+        this.aliases = []
         commands.push(this);
     }
 
@@ -53,6 +55,13 @@ function clearLog() {
     }
 }
 
+
+function aliasCommand(new_inp, old) {
+    let found = findCommand(old);
+    if (found) {
+        found.aliases.push(new_inp);
+    }
+}
 function printToLog(content) {
     let mainDiv = document.createElement("div");
     mainDiv.className = "log";
@@ -123,6 +132,9 @@ function findCommand(name) {
     for (let i = 0; i < commands.length; i++) {
         let command = commands[i];
         if (command.name == name) {
+            return command;
+        }
+        if (command.aliases.includes(name)) {
             return command;
         }
     }
