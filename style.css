@@ -2,6 +2,11 @@
     --background-color: #000000;
     --text-color: #00ff22;
     --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
+    --font-size: 1vw;
+    font-size: 1rem;
+}
+html::-webkit-scrollbar {
+    display: none;
 }
 html, body {
     background: var(--background-color);
@@ -9,6 +14,8 @@ html, body {
     height: 100%;
     font-family: var(--font);
     overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .term-log {

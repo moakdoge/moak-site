@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="style.css">
 <html>
 <title>moakdoge.dev</title>
+<meta name="viewport" content="width-device-width, initial-scale=1.0">
 <body id="main-body">
     <div class="term-log" id="term-log">
         <div class="input" id="input-prompt">
@@ -14,7 +15,14 @@
         registerCommand("help",  "Helps you.", "moakdoge", function (args){
             for (let command in commands) {
                 let description = commands[command].description;
+
+                if (description == undefined) {
+                    continue;
+                }
                
+                if (commands[command].hidden) {
+                    continue;
+                }
                 printToLog(commands[command].name + ": " + description);
             }
         })
@@ -80,6 +88,20 @@
 
         registerCommand("clear", "Clears the terminal", "moakdoge", function (args) {
             clearLog();
+        })
+
+        registerCommand("scatty", "scatty the scatteriel", "scatty", function (args) {
+            printToLog("go check out my friend scatty: [scatty](https://scatty.ing)");
+        }, true)
+
+        registerCommand("source", "Get the source code of this website.", "moakdoge", function (args) {
+            printToLog("You can find the source code at my [github](https://github.com/moakdoge/moak-site). Warning ya, it's baaad.")
+        });
+
+        registerCommand("eval", "Evaluates an input.", "moakdoge", function (args) {
+            let fixed = args.slice(1).join(" ");
+            let val = eval(fixed);
+            printToLog(val?.toString() ?? "No output");
         })
         
         runCommand(processCommandInput("whoami"));

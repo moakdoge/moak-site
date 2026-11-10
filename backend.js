@@ -14,17 +14,18 @@ let commandHistory = [];
 let cursor = 0;
 
 class MainCommand {
-    constructor(name, description, author, callback) {
+    constructor(name, description, author, callback, hidden) {
         this.name = name;
         this.description = description;
         this.author = author;
         this.callback = callback;
+        this.hidden = hidden;
         commands.push(this);
     }
 }
 
-function registerCommand(name, description, author, callback) {
-    new MainCommand(name, description, author, callback);
+function registerCommand(name, description, author, callback, hidden = false) {
+    new MainCommand(name, description, author, callback, hidden);
     
 }
 function getPrompt() {
@@ -56,6 +57,7 @@ function printToLog(content) {
         .replace(/\\n|\r?\n/g, "<br>");
     mainDiv.appendChild(contentItem);
     terminalLog.insertBefore(mainDiv, inputPrompt);
+    terminalLog.scrollTop = terminalLog.scrollHeight;
 }
 
 function initPrompt() {
@@ -71,6 +73,7 @@ function initPrompt() {
 
 function resizeCommandInput() {
     commandInput.style.width = Math.max(commandInput.value.length, 1) + "ch";
+    terminalLog.scrollTop = terminalLog.scrollHeight;
 }
 /**
  * Splits input into tokens while preserving quoted arguments.
@@ -140,6 +143,7 @@ function submitPrompt() {
     }
 
     initPrompt();
+    terminalLog.scrollTop = terminalLog.scrollHeight;
 }
 
 initPrompt();
