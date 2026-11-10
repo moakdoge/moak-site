@@ -12,17 +12,27 @@
     <script src="backend.js"></script>
     <script>
         registerCommand("help",  "Helps you.", "moakdoge", function (args){
-            let command = args[1];
-            let found = findCommand(command);
-            if (found) {
-                printToLog(found.description);
-                return;
+            for (let command in commands) {
+                let description = commands[command].description;
+               
+                printToLog(commands[command].name + ": " + description);
             }
-            raiseError(command, exceptions.notFound);
+        })
+
+        registerCommand("echo",  "Echoes your input.", "moakdoge", function (args){
+             
+            let output = args.slice(1).join(" ");
+            printToLog(output);
+        });
+
+        registerCommand("history", "Shows the command history.", "moakdoge", function (args){
+            for (let i = 0; i < commandHistory.length; i++) {
+                printToLog(commandHistory[i]);
+            }
         })
 
         registerCommand("whoami",  "Tells you a bit about me", "moakdoge", function (args){
-            let baseString = "Hey! I'm @moakdoge, a %age year old kid who likes to program. \n To learn more, run `languages`";
+            let baseString = "Hey! I'm @moakdoge, a %age year old kid who likes to program. \n To learn more about what I code in, run `languages`. \n To learn more about me, run `socials`.";
             let birthday = new Date("2010-03-17T15:00:04.000Z");
             let timeDiff = Math.floor((Date.now() - birthday.getTime()) / 3.15576e10);
             printToLog(baseString.replace("%age", timeDiff));
@@ -50,7 +60,7 @@
                 GitHub: {handle: "@moakdoge", link: "https://github.com/moakdoge",},
                 YouTube: {handle: "@moakdoge", link: "https://www.youtube.com/@moakdoge"},
                 Discord: {handle: "@moakdoge", link: "https://discord.com/users/866493074699321354"},
-                Email: {handle: "root@moakdoge.online", link: "mailto:root.moakdoge.online"}
+                Email: {handle: "root@moakdoge.dev", link: "mailto:root.moakdoge.dev"}
             
             };
 
@@ -67,8 +77,16 @@
 
             });
         })
+
+        registerCommand("clear", "Clears the terminal", "moakdoge", function (args) {
+            clearLog();
+        })
         
         runCommand(processCommandInput("whoami"));
+        runCommand(processCommandInput("echo '---------------------'"));
+        runCommand(processCommandInput("help"));
+        runCommand(processCommandInput("\n"));
+        commandHistory = [];
     </script>
 </body>
 </html>

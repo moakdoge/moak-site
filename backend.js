@@ -9,6 +9,9 @@ const exceptions = {
 }
 /** @type {MainCommand[]} */
 let commands = [];
+/** @type {string[]} */
+let commandHistory = [];
+let cursor = 0;
 
 class MainCommand {
     constructor(name, description, author, callback) {
@@ -30,6 +33,15 @@ function getPrompt() {
     return username + "@" + hostname + " >  ";
 }
 
+function clearLog() {
+    for (let i = terminalLog.children.length - 1; i >= 0; i--) {
+        let child = terminalLog.children[i];
+        if (child !== inputPrompt) {
+            terminalLog.removeChild(child);
+        }
+    }
+}
+
 function printToLog(content) {
     let mainDiv = document.createElement("div");
     mainDiv.className = "log";
@@ -49,6 +61,11 @@ function printToLog(content) {
 function initPrompt() {
     inputPromptText.textContent = getPrompt();
     commandInput.value = "";
+    if (cursor != 0 && cursor <= commandHistory.length) {
+        commandInput.value = commandHistory[commandHistory.length - cursor];
+    } else {
+        cursor = 0;
+    }
     resizeCommandInput();
 }
 
@@ -96,8 +113,10 @@ function findCommand(name) {
 function runCommand(args) {
     let commandName = args[0];
     let found = findCommand(commandName);
+    commandHistory.push(args.join(" "));
     if (found) {
         found.callback(args);
+        cursor = 0;
         return true;
     }
     return false;
@@ -130,6 +149,16 @@ commandInput.addEventListener('input', resizeCommandInput);
 inputPrompt.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         submitPrompt();
+    }
+    if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        cursor++;
+        initPrompt();
+    }
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        cursor--;
+        initPrompt();
     }
 });
 
