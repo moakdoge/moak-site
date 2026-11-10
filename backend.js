@@ -13,6 +13,8 @@ let commands = [];
 let commandHistory = [];
 let cursor = 0;
 
+let username = "root";
+let hostname = "moakdoge.dev";
 class MainCommand {
     constructor(name, description, author, callback, hidden) {
         this.name = name;
@@ -22,15 +24,23 @@ class MainCommand {
         this.hidden = hidden;
         commands.push(this);
     }
+
+    toString() {
+        return `${this.name}: (hidden: ${this.hidden ? "yes" : "no"}, description="${this.description}", author="${this.author}")`
+    }
 }
 
 function registerCommand(name, description, author, callback, hidden = false) {
     new MainCommand(name, description, author, callback, hidden);
-    
+}
+
+function registerStupidCommand(name, error) {
+    function callback() {
+        printToLog(error);
+    }
+    new MainCommand(name, "We don't know...", "N/A", callback, true);
 }
 function getPrompt() {
-    const username = "you";
-    const hostname = "moakdoge.dev";
     return username + "@" + hostname + " >  ";
 }
 

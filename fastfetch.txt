@@ -1,0 +1,22 @@
+            :@@@@@@@:                    %username@%hostname
+            @@@@@@@@@-                   ------------------------------------------------
+    .:%.    @@@@@@@@@+.       @%         OS: moakdoge.os x86_64
+   *@@@%+:  :@@@@@@@%=: .=%@@@@@@=       Host: %useragent
+  :@@@@@@##@@@@@@@@@%*+%@%+@@@@@@@+      Kernel: How the hell am I supposed to know?
+  @@#####+@@@@@@@%:######=@@@@@@@@@-     Uptime: 0 days, 0 hours, 0 minutes.
+ *@%######.@@@@@##########-@@@@@@@@#.    Packages: 0 (doge)
+ %@-#.@=:##+@@@@-###%@:=###*@#*+=-+#:    Shell: doge 1.6
+ @@.#@@*=:#-%%**-##%@@%**####=-          Display: %widthx%height 
+ @@-#@@@@+.-...:=.#%@@@@%####-           DE: you don't have one.
+ %@%##*#:.o.....o...-%@+####@+    -:     WM: you don't have one.
+ +@@*#....................+@@@@@@@@+     WM Theme: you don't have one.
+  @%:....................._:@@@@@@@=.    Theme: you don't have one.
+  .=:...............__*-=.=@@@@@@#=.     Icons: you don't have one.
+   :+:....:==*__*-=`:..==-:#@@@@@%+:     Font: hopefully JetBrains Mono
+     .--=-:  +..::.....-:    =%@*=:      Cursor: I can't figure this out...
+              :........-                 Terminal: this website.
+                .:...--.                 Terminal Font: hopefully JetBrains Mono
+
+
+                                                                 
+                                                                 

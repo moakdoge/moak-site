@@ -7,7 +7,7 @@
     <div class="term-log" id="term-log">
         <div class="input" id="input-prompt">
             <span class="prompt" id="prompt-text">you@moakdoge.dev > </span>
-            <input class="command-box" id="command-input" value="test">
+            <input class="command-box" id="command-input" value="test" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off">
         </div>
     </div>
     <script src="backend.js"></script>
@@ -90,10 +90,6 @@
             clearLog();
         })
 
-        registerCommand("scatty", "scatty the scatteriel", "scatty", function (args) {
-            printToLog("go check out my friend scatty: [scatty](https://scatty.ing)");
-        }, true)
-
         registerCommand("source", "Get the source code of this website.", "moakdoge", function (args) {
             printToLog("You can find the source code at my [github](https://github.com/moakdoge/moak-site). Warning ya, it's baaad.")
         });
@@ -104,12 +100,9 @@
             printToLog(val?.toString() ?? "No output");
         })
         
-        registerCommand("ssh", "I wish.", "moakdoge", function(args) {
-            printToLog("I wish, man. I'm not that talented.");
-        }) 
 
         registerCommand("about", "About me", "moakdoge", function (args) {
-            let backgroundInfo = `Hey! I'm @moakdoge, but you can call me Moak.
+            let backgroundInfo = `Hey! I'm @moakdoge, but you can call me moak (/moʊk/).
             I'm gonna try and keep this brief, because you're already spending the time
             to check out my website and I don't want to waste your time (Like i'm already doing..)
 
@@ -122,7 +115,7 @@
             
             If you can't tell, I'm the type to hyperoptimize everything. This website took forever
             purely because I wanted to make it feel perfect. I know, I know green text on a black background is
-            "omz im such a haxxor!!!!" but I like it and it describes me to
+            &&"omz im such a haxxor!!!!"&& but I like it and it describes me to
             less techy people who may visit this.
 
             I'm fully self-taught and have been programming since I was 10 years old. It's been a long time.
@@ -142,6 +135,71 @@
             printToLog(backgroundInfo);
             
         });
+
+
+        /* Secret commands. You found them.*/
+        registerStupidCommand("ls", "No files here, man. It's just a stupid website. I don't wannt implement a file system.");
+        registerStupidCommand("ssh", "I wish, man. I'm not that talented.");
+        registerStupidCommand("moakdoge", "yep... that's me.");
+        registerStupidCommand("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
+        registerStupidCommand("reboot", "You really think a browser can reboot your computer?");
+        registerStupidCommand("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
+        registerStupidCommand("mkdir", "Nope. Not making a filesystem.");
+        registerStupidCommand("cat", "I don't have any files, how would cat even work?");
+        registerStupidCommand("apt", "This is not Ubuntu!");
+        registerStupidCommand("pacman", "This is not Arch! (i use arch btw)");
+        registerStupidCommand("yay", "This is not Arch! (i use arch btw)");
+        registerStupidCommand("dnf", "This is not Fedora!");
+        registerStupidCommand("zypper", "This is not openSUSE!");
+        registerStupidCommand("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
+        registerStupidCommand("xbps-install", "XBPS? What even is that? Who are you?");
+        registerStupidCommand("apk", "This is not Alphine! (iSH? Random embedded? Who are you?)");
+        registerStupidCommand("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
+        registerStupidCommand("curl", "Read |wget|, but this won't ever work.");
+        registerStupidCommand("cd", "No file system. Never will be.");
+        registerStupidCommand("pwd", "You're in /. Once again, no file system.");
+        registerStupidCommand("cp", "Really?");
+        registerStupidCommand("mv", "There's nothing to even move!");
+        registerStupidCommand("rmdir", "There's no directories to remove!");
+        registerStupidCommand("touch", "Nice try.");
+        registerStupidCommand("kill", "Can't kill anything here, bucko.");
+        registerStupidCommand("chmod", "No files to own. Do not know why you're trying.");
+        registerStupidCommand("ping", "Go do ping on your own terminal.");
+
+        registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", function (args) {
+            let newHostName = args[1];
+            if (newHostName == undefined) {
+                printToLog(`Your current hostname is ${hostname}.`);
+                return;
+            }
+            hostname = newHostName;
+            printToLog(`Fine, I'll change the hostname. Grumble. Your new hostname is ${hostname}.`)
+        });
+        registerCommand("username", `Sets or reads your username. Defaults to ${username}.`, "moakdoge", function (args) {
+            let newUser = args[1];
+            if (newUser == undefined) {
+                printToLog(`Your current username is ${username}.`);
+                return;
+            }
+            username = newUser;
+            printToLog(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${username}.`)
+        });
+
+        registerCommand("fastfetch", "Gets some information about this 'OS'.", "moakdoge",function (args) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/fastfetch.txt', false); // false = synchronous
+            xhr.send(null);
+            let fixed = xhr.response
+            .replace("%username", username)
+            .replace("%hostname", hostname)
+            .replace("%useragent", navigator.userAgent)
+            .replace("%width", String(window.screen.width))
+            .replace("%height", String(window.screen.height));
+
+            printToLog("<pre>"+fixed+"</pre>");
+        })
+
+        /* You guys are laughing at me. For sure. I don't care if it works it works*/
         runCommand(processCommandInput("whoami"));
         runCommand(processCommandInput("echo '---------------------'"));
         runCommand(processCommandInput("help"));
