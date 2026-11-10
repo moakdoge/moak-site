@@ -16,6 +16,7 @@ html, body {
     overflow: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    overflow: hidden;
 }
 
 .term-log {

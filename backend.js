@@ -57,7 +57,7 @@ function printToLog(content) {
         .replace(/\\n|\r?\n/g, "<br>");
     mainDiv.appendChild(contentItem);
     terminalLog.insertBefore(mainDiv, inputPrompt);
-    terminalLog.scrollTop = terminalLog.scrollHeight;
+    scrollToBottom();
 }
 
 function initPrompt() {
@@ -71,9 +71,15 @@ function initPrompt() {
     resizeCommandInput();
 }
 
+function scrollToBottom() {
+    requestAnimationFrame(() => {
+        terminalLog.scrollTop = terminalLog.scrollHeight;
+    });
+}
+
 function resizeCommandInput() {
     commandInput.style.width = Math.max(commandInput.value.length, 1) + "ch";
-    terminalLog.scrollTop = terminalLog.scrollHeight;
+    scrollToBottom();
 }
 /**
  * Splits input into tokens while preserving quoted arguments.
@@ -143,7 +149,7 @@ function submitPrompt() {
     }
 
     initPrompt();
-    terminalLog.scrollTop = terminalLog.scrollHeight;
+    scrollToBottom();
 }
 
 initPrompt();
