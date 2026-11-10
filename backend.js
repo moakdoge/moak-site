@@ -49,6 +49,8 @@ function printToLog(content) {
     let contentItem = document.createElement("span");
     contentItem.className = "content";
     contentItem.innerHTML = content
+        .replace(/\|([^|]+)\|/g, '<a href="#" class="command-text command-link" data-command="$1">$1</a>')
+        .replace(/&&([^&]+)&&/g, '<span class="colored-text">$1</span>')
         .replace(/`([^`]+)`/g, '<span class="command-text">$1</span>')
         .replace(
             /\[([^\]]+)\]\(([^)\s]+)\)/g,
@@ -126,8 +128,10 @@ function runCommand(args) {
     if (found) {
         found.callback(args);
         cursor = 0;
+        scrollToBottom();
         return true;
     }
+    scrollToBottom();
     return false;
 }
 
@@ -139,8 +143,7 @@ function raiseError(command, message) {
 function submitPrompt() {
     //For now, this'll just handle the equivalent of an enter
     let command = commandInput.value;
-    console.log(command);
-    let combined = getPrompt() + command;
+    let combined = `&&${getPrompt() + command}&&`;
     printToLog(combined);
     let parts = processCommandInput(command);
     let success = runCommand(parts);
@@ -179,8 +182,9 @@ mainBody.addEventListener("click", (e) => {
 document.addEventListener('click', (e) => {
     const cmdElement = e.target.closest('.command-text');
     if (cmdElement) {
-        console.log(cmdElement.textContent)
-        commandInput.value = cmdElement.textContent;
+        e.preventDefault();
+        const command = cmdElement.dataset.command || cmdElement.textContent;
+        commandInput.value = command;
         resizeCommandInput();
         submitPrompt();
     }

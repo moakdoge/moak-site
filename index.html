@@ -40,7 +40,7 @@
         })
 
         registerCommand("whoami",  "Tells you a bit about me", "moakdoge", function (args){
-            let baseString = "Hey! I'm @moakdoge, a %age year old kid who likes to program. \n To learn more about what I code in, run `languages`. \n To learn more about me, run `socials`.";
+            let baseString = "Hey! I'm @moakdoge, a %age year old kid who likes to program. \n To learn more about what I code in, run |languages|. \n To contact me, run |socials|.\n For more information on me, run |about|.";
             let birthday = new Date("2010-03-17T15:00:04.000Z");
             let timeDiff = Math.floor((Date.now() - birthday.getTime()) / 3.15576e10);
             printToLog(baseString.replace("%age", timeDiff));
@@ -104,6 +104,44 @@
             printToLog(val?.toString() ?? "No output");
         })
         
+        registerCommand("ssh", "I wish.", "moakdoge", function(args) {
+            printToLog("I wish, man. I'm not that talented.");
+        }) 
+
+        registerCommand("about", "About me", "moakdoge", function (args) {
+            let backgroundInfo = `Hey! I'm @moakdoge, but you can call me Moak.
+            I'm gonna try and keep this brief, because you're already spending the time
+            to check out my website and I don't want to waste your time (Like i'm already doing..)
+
+            I'm primarily a backend dev. I can write front end, this website was written by me,
+            but I am horrible at it. Why do you think I did a terminal? I'm bad at web design
+            and terminals are easy.
+
+            Anyways. I like developing really weird projects legit or vibecoding (don't worry, I don't vibecode often! only if i'm lazy).
+            I wrote my own chat site... running on my own HTTP server... which ran on my own parsing li-
+            
+            If you can't tell, I'm the type to hyperoptimize everything. This website took forever
+            purely because I wanted to make it feel perfect. I know, I know green text on a black background is
+            "omz im such a haxxor!!!!" but I like it and it describes me to
+            less techy people who may visit this.
+
+            I'm fully self-taught and have been programming since I was 10 years old. It's been a long time.
+            I'm also the type of person to try to get everything free. This site is an example.
+            The domain? Free via GitHub Education
+            Hosting? Free through GitHub Pages (see |source| for the code)
+            Even my minecraft.moakdoge.dev is free via Oracle Cloud Hosting (private server)
+            Point is, I support getting things free IF it's from a big company (FUCK YOU, adobe.)
+
+            I'm yapping here so I think i'll stop here. Thank you for listening to my ted talk and if you want
+            to contact me, for whatever reason, hit me up at |socials|. 
+            I'll *maybe* respond, prob not.
+
+            See ya!
+            `
+
+            printToLog(backgroundInfo);
+            
+        });
         runCommand(processCommandInput("whoami"));
         runCommand(processCommandInput("echo '---------------------'"));
         runCommand(processCommandInput("help"));
