@@ -1,0 +1,103 @@
+{
+  "name": "/",
+  "files": [
+    {
+      "name": "favicon.ico",
+      "extension": ".ico",
+      "size": 8703,
+      "path": "favicon.ico"
+    },
+    {
+      "name": "style.css",
+      "extension": ".css",
+      "size": 1563,
+      "path": "style.css"
+    },
+    {
+      "name": "CNAME",
+      "extension": "",
+      "size": 12,
+      "path": "CNAME"
+    },
+    {
+      "name": "index.html",
+      "extension": ".html",
+      "size": 8737,
+      "path": "index.html"
+    },
+    {
+      "name": "retro.html",
+      "extension": ".html",
+      "size": 15377,
+      "path": "retro.html"
+    },
+    {
+      "name": "LICENSE",
+      "extension": "",
+      "size": 35149,
+      "path": "LICENSE"
+    },
+    {
+      "name": "variables.js",
+      "extension": ".js",
+      "size": 2587,
+      "path": "variables.js"
+    },
+    {
+      "name": "backend.js",
+      "extension": ".js",
+      "size": 8519,
+      "path": "backend.js"
+    },
+    {
+      "name": "README.md",
+      "extension": ".md",
+      "size": 48,
+      "path": "README.md"
+    }
+  ],
+  "directories": [
+    {
+      "name": "messages",
+      "files": [
+        {
+          "name": "formatting-test.txt",
+          "extension": ".txt",
+          "size": 663,
+          "path": "messages/formatting-test.txt"
+        },
+        {
+          "name": "ai-use.txt",
+          "extension": ".txt",
+          "size": 841,
+          "path": "messages/ai-use.txt"
+        },
+        {
+          "name": "source.txt",
+          "extension": ".txt",
+          "size": 142,
+          "path": "messages/source.txt"
+        },
+        {
+          "name": "fastfetch.txt",
+          "extension": ".txt",
+          "size": 1470,
+          "path": "messages/fastfetch.txt"
+        },
+        {
+          "name": "whoami.txt",
+          "extension": ".txt",
+          "size": 185,
+          "path": "messages/whoami.txt"
+        },
+        {
+          "name": "about.txt",
+          "extension": ".txt",
+          "size": 1575,
+          "path": "messages/about.txt"
+        }
+      ],
+      "directories": []
+    }
+  ]
+}

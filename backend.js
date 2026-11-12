@@ -74,7 +74,7 @@ async function registerStupidCommand(name, error, hidden=true, description="We d
     new MainCommand(name, description, author, callback, hidden);
 }
 async function getPrompt() {
-    return username + "@" + hostname + " > ";
+    return username + "@" + hostname + " " + await fileManager.getDirectory() + "> ";
 }
 
 async function clearLog() {

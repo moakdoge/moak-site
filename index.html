@@ -10,9 +10,14 @@
             <input class="command-box" id="command-input" value="test" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off">
         </div>
     </div>
+    <script src="file_system.js"></script>
     <script src="backend.js"></script>
     <script src="variables.js"></script>
     <script>
+        /// <refrence path="./file_system.js" />
+
+        
+        
         (async function () {
         await registerCommand("help",  "Helps you.", "moakdoge", async function (args){
             for (let command in commands) {
@@ -50,6 +55,7 @@
                 lua: new Date("2020-11-23"),
                 "C++": new Date("2025-8-15"),
             }
+            
 
             for (const [name, date] of Object.entries(myLangs)) {
                 const now = date;
@@ -95,43 +101,90 @@
             await printToLog(val?.toString() ?? "No output");
         })
         
+        /* filesystem conmands... blech */
+        await registerCommand("ls", "Lists files in the current directory", "moakdoge", async function (args) {
+            let directory = await fileManager._getCurrentDirectory();
+            if (directory === null) {
+                await printToLog("Unable to read the current directory.");
+                return;
+            }
+
+            for (const child of directory.directories ?? []) {
+                await printToLog(`**${child.name + "/"}**`);
+            }
+            for (const file of directory.files ?? []) {
+                await printToLog(file.name);
+            }
+        });
+
+        await registerCommand("cat", "Prints a file", "moakdoge", async function (args) {
+            const path = args[1];
+            if (path === undefined) {
+                await printToLog("cat: missing file operand");
+                return;
+            }
+
+            const content = await fileManager.readFile(path);
+            if (content === null) {
+                await printToLog("cat: no such file: " + path);
+                return;
+            }
+
+            await printToLog("--disable-text-formatting--" + content);
+        });
+
+        const readOnlyFilesystemError = async function (args) {
+            await raiseError(args[0], "Filesystem is read-only.");
+        };
+
+
         
-        registerStupidCommand("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
-        registerStupidCommand("about", "$message about", false, "About me.", "moakdoge");
+
+
+        
+        await registerStupidCommand("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
+        await registerStupidCommand("about", "$message about", false, "About me.", "moakdoge");
 
         /* Secret commands. You found them.*/
-        registerStupidCommand("sudo", "... You're root.");
-        registerStupidCommand("ls", "No files here, man. It's just a stupid website. I don't wannt implement a file system.");
-        registerStupidCommand("ssh", "I wish, man. I'm not that talented.");
-        registerStupidCommand("moakdoge", "yep... that's me.");
-        registerStupidCommand("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
-        registerStupidCommand("reboot", "You really think a browser can reboot your computer?");
-        registerStupidCommand("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
-        registerStupidCommand("mkdir", "Nope. Not making a filesystem.");
-        registerStupidCommand("cat", "I don't have any files, how would cat even work?");
-        registerStupidCommand("apt", "This is not Ubuntu!");
-        registerStupidCommand("pacman", "This is not Arch! (i use arch btw)");
-        registerStupidCommand("dnf", "This is not Fedora!");
-        registerStupidCommand("zypper", "This is not openSUSE!");
-        registerStupidCommand("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
-        registerStupidCommand("xbps-install", "XBPS? What even is that? Who are you?");
-        registerStupidCommand("apk", "This is not Alphine! (iSH? Random embedded? Who are you?)");
-        registerStupidCommand("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
-        registerStupidCommand("curl", "Read |wget|, but this won't ever work.");
-        registerStupidCommand("cd", "No file system. Never will be.");
-        registerStupidCommand("pwd", "You're in /. Once again, no file system.");
-        registerStupidCommand("cp", "Really?");
-        registerStupidCommand("mv", "There's nothing to even move!");
-        registerStupidCommand("rmdir", "There's no directories to remove!");
-        registerStupidCommand("touch", "Nice try.");
-        registerStupidCommand("kill", "Can't kill anything here, bucko.");
-        registerStupidCommand("chmod", "No files to own. Do not know why you're trying.");
-        registerStupidCommand("ping", "Go do ping on your own terminal.");
-        registerStupidCommand("arknight", "rose12344 made me add this. You know who you are.");
-        aliasCommand("arknights", "arknight");
-        aliasCommand("neofetch", "fastfetch");
-        aliasCommand("yay", "pacman");
-        aliasCommand("apt-get", "apt");
+        await registerStupidCommand("sudo", "... You're root.");
+        await registerStupidCommand("ssh", "I wish, man. I'm not that talented.");
+        await registerStupidCommand("moakdoge", "yep... that's me.");
+        await registerStupidCommand("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
+        await registerStupidCommand("reboot", "You really think a browser can reboot your computer?");
+        await registerStupidCommand("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
+        await registerCommand("mkdir", "Creates a directory", "moakdoge", readOnlyFilesystemError, true);
+        await registerStupidCommand("apt", "This is not Ubuntu!");
+        await registerStupidCommand("pacman", "This is not Arch! (i use arch btw)");
+        await registerStupidCommand("dnf", "This is not Fedora!");
+        await registerStupidCommand("zypper", "This is not openSUSE!");
+        await registerStupidCommand("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
+        await registerStupidCommand("xbps-install", "XBPS? What even is that? Who are you?");
+        await registerStupidCommand("apk", "This is not Alphine! (iSH? Random embedded? Who are you?");
+        await registerStupidCommand("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
+        await registerStupidCommand("curl", "Read |wget|, but this won't ever work.");
+        await registerCommand("cd", "Changes the current directory", "moakdoge", async function (args) {
+            const path = args[1] ?? "/";
+            const changed = await fileManager.setDirectory(path);
+            if (!changed) {
+                await printToLog("cd: no such directory: " + path);
+            }
+        });
+        await registerCommand("pwd", "Prints the current directory", "moakdoge", async function () {
+            await printToLog(await fileManager.getDirectory());
+        });
+        await registerCommand("cp", "Copies a file", "moakdoge", readOnlyFilesystemError, true);
+        await registerCommand("mv", "Moves a file", "moakdoge", readOnlyFilesystemError, true);
+        await registerCommand("rmdir", "Removes a directory", "moakdoge", readOnlyFilesystemError, true);
+        await registerCommand("rm", "Removes a file", "moakdoge", readOnlyFilesystemError, true);
+        await registerCommand("touch", "Creates a file", "moakdoge", readOnlyFilesystemError, true);
+        await registerStupidCommand("kill", "Can't kill anything here, bucko.");
+        await registerCommand("chmod", "Changes file permissions", "moakdoge", readOnlyFilesystemError, true);
+        await registerStupidCommand("ping", "Go do ping on your own terminal.");
+        await registerStupidCommand("arknight", "rose12344 made me add this. You know who you are.");
+        await aliasCommand("arknights", "arknight");
+        await aliasCommand("neofetch", "fastfetch");
+        await aliasCommand("yay", "pacman");
+        await aliasCommand("apt-get", "apt");
 
         await registerStupidCommand("ai-use", `$message ai-use`, false, "How AI was used on this site.", "moakdoge");
 
