@@ -65,6 +65,7 @@ html, body {
 }
 
 
+
 .window {
     position: fixed;
     left: 50%;
@@ -82,14 +83,34 @@ html, body {
 }
 
 .title-bar {
-    height:7%;
+    height:40px;
     background-color: var(--background-color);
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
     user-select: none;
+    padding-left:2%;
+    padding-right:1%;
 }
 
+.close-button {
+    background-color: #00000022;
+    font-family: inherit;
+    color:var(--text-color);
+    appearance: none;
+    border: var(--text-color);
+    border-style: solid;
+    text-decoration: none;
+    align-self: center;
+    transition: 0.1s linear;
+}
+
+.close-button:hover {
+    background-color: var(--window-color);
+    cursor:pointer;
+}
 .title-bar:hover {
     cursor: grab;
 }
@@ -101,6 +122,10 @@ html, body {
 .title-bar p {
     font-family: inherit;
     color: var(--text-color);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
 }
 body::after {
   content: "";

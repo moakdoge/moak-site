@@ -53,7 +53,7 @@ async function registerCommand(name, description, author, callback, hidden = fal
 
 /** @param {string | callback} callback */
 async function registerStringVariable(name, callback) {
-    if (typeof(callback) == String) { 
+    if (typeof (callback) == String) {
         async function _() {
             return callback;
         }
@@ -61,7 +61,7 @@ async function registerStringVariable(name, callback) {
     }
     string_variables[name] = callback
 }
-async function registerStupidCommand(name, error, hidden=true, description="We don't know...", author="N/A") {
+async function registerStupidCommand(name, error, hidden = true, description = "We don't know...", author = "N/A") {
     if (error.startsWith("$message")) {
         error = String(error).replace("$message", "");
         error = error.trim();
@@ -132,7 +132,7 @@ async function formatContent(content) {
     } else {
         content = content.replace(disableFormattingMarker, "");
     }
-    for (let name in string_variables){
+    for (let name in string_variables) {
         let callback = string_variables[name];
         let replacement = String(await callback());
         content = content.replaceAll(`%${name}`, replacement);
@@ -148,7 +148,7 @@ async function printToLog(content) {
     contentItem.className = "content";
     contentItem.innerHTML = fixed_content
 
-    
+
     mainDiv.appendChild(contentItem);
     terminalLog.insertBefore(mainDiv, inputPrompt);
     await scrollToBottom();
@@ -182,18 +182,18 @@ async function resizeCommandInput() {
  */
 async function processCommandInput(raw) {
     const regex = /"[^"]*"|'[^']*'|\S+/g;
-  const matches = raw.match(regex) || [];
+    const matches = raw.match(regex) || [];
 
-  // Strip outer quotes from each token
-  return matches.map(token => {
-    if (
-      (token.startsWith('"') && token.endsWith('"')) ||
-      (token.startsWith("'") && token.endsWith("'"))
-    ) {
-      return token.slice(1, -1);
-    }
-    return token;
-  });
+    // Strip outer quotes from each token
+    return matches.map(token => {
+        if (
+            (token.startsWith('"') && token.endsWith('"')) ||
+            (token.startsWith("'") && token.endsWith("'"))
+        ) {
+            return token.slice(1, -1);
+        }
+        return token;
+    });
 }
 
 /**
@@ -252,49 +252,80 @@ async function submitPrompt() {
 
 initPrompt();
 
-async function createWindow(x, y) {
+async function createWindow(w, h, title) {
     const newElement = document.createElement("div");
     newElement.className = "window";
     newElement.style.zIndex = 999;
-    newElement.style.width = `${String(x)}%`;
-    newElement.style.height = `${String(y)}%`;
+    newElement.style.width = `${String(w)}%`;
+    newElement.style.height = `${String(h)}%`;
     mainBody.appendChild(newElement)
+
+    const titleBar = document.createElement("div")
+    titleBar.className = "title-bar"
+    newElement.appendChild(titleBar);
+
+    const titleItem = document.createElement("p");
+    titleBar.appendChild(titleItem);
+    titleItem.innerText = title;
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "close-button";
+    closeButton.innerText = "X";
+    titleBar.appendChild(closeButton);
+
+
+    registerWindow(newElement, titleBar, closeButton);
     return newElement;
 }
 
-const windowElement = document.getElementById("window");
-const titleBar = document.querySelector(".title-bar");
-let dragOffset = null;
 
-titleBar.addEventListener("pointerdown", (e) => {
-    const bounds = windowElement.getBoundingClientRect();
-    dragOffset = {
-        x: e.clientX - bounds.left,
-        y: e.clientY - bounds.top
+
+
+function registerWindow(windowElement, titleBar, closeButton) {
+    let dragOffset = null;
+
+    titleBar.addEventListener("pointerdown", (e) => {
+        const bounds = windowElement.getBoundingClientRect();
+        dragOffset = {
+            x: e.clientX - bounds.left,
+            y: e.clientY - bounds.top
+        };
+        titleBar.setPointerCapture(e.pointerId);
+        titleBar.style.cursor = "grabbing";
+    });
+
+
+    closeButton.addEventListener("pointerdown", (e) => {
+        e.stopPropagation();
+    });
+
+    closeButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        windowElement.remove();
+    });
+
+    titleBar.addEventListener("pointermove", (e) => {
+        if (dragOffset === null) {
+            return;
+        }
+
+        windowElement.style.position = "fixed";
+        windowElement.style.transform = "none";
+        windowElement.style.left = `${e.clientX - dragOffset.x}px`;
+        windowElement.style.top = `${e.clientY - dragOffset.y}px`;
+    });
+
+    const stopDragging = (e) => {
+        dragOffset = null;
+        titleBar.releasePointerCapture?.(e.pointerId);
+        titleBar.style.cursor = "grab";
     };
-    titleBar.setPointerCapture(e.pointerId);
-    titleBar.style.cursor = "grabbing";
-});
 
-titleBar.addEventListener("pointermove", (e) => {
-    if (dragOffset === null) {
-        return;
-    }
+    titleBar.addEventListener("pointerup", stopDragging);
+    titleBar.addEventListener("pointercancel", stopDragging);
 
-    windowElement.style.position = "fixed";
-    windowElement.style.transform = "none";
-    windowElement.style.left = `${e.clientX - dragOffset.x}px`;
-    windowElement.style.top = `${e.clientY - dragOffset.y}px`;
-});
-
-const stopDragging = (e) => {
-    dragOffset = null;
-    titleBar.releasePointerCapture?.(e.pointerId);
-    titleBar.style.cursor = "grab";
-};
-
-titleBar.addEventListener("pointerup", stopDragging);
-titleBar.addEventListener("pointercancel", stopDragging);
+}
 
 commandInput.addEventListener('input', async () => await resizeCommandInput());
 
@@ -334,3 +365,8 @@ document.addEventListener('click', async (e) => {
     }
 })
 
+
+const windowElement = document.getElementById("window");
+const found = document.querySelector(".title-bar");
+const foundB = document.querySelector(".close-button");
+registerWindow(windowElement, found, foundB);
