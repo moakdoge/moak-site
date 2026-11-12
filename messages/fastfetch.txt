@@ -1,11 +1,12 @@
+--disable-text-formatting--
             :@@@@@@@:                    %username@%hostname
             @@@@@@@@@-                   ------------------------------------------------
     .:%.    @@@@@@@@@+.       @%         OS: moakdoge.os x86_64
    *@@@%+:  :@@@@@@@%=: .=%@@@@@@=       Host: %useragent
   :@@@@@@##@@@@@@@@@%*+%@%+@@@@@@@+      Kernel: How the hell am I supposed to know?
-  @@#####+@@@@@@@%:######=@@@@@@@@@-     Uptime: 0 days, 0 hours, 0 minutes.
+  @@#####+@@@@@@@%:######=@@@@@@@@@-     Uptime: %uptime-day days, %uptime-hour hours, %uptime-minute minutes, %uptime-second seconds.
  *@%######.@@@@@##########-@@@@@@@@#.    Packages: 0 (doge)
- %@-#.@=:##+@@@@-###%@:=###*@#*+=-+#:    Shell: doge 1.6
+  %@-#.@=:##+@@@@-###%@:=###*@#*+=-+#:    Shell: doge 1.6
  @@.#@@*=:#-%%**-##%@@%**####=-          Display: %widthx%height 
  @@-#@@@@+.-...:=.#%@@@@%####-           DE: you don't have one.
  %@%##*#:.o.....o...-%@+####@+    -:     WM: you don't have one.

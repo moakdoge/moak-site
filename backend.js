@@ -4,6 +4,12 @@ const inputPromptText = document.getElementById("prompt-text");
 const commandInput = document.getElementById("command-input");
 const mainBody = document.getElementById("main-body");
 const birthday = new Date("2010-03-17T15:00:04.000Z");
+const startupTime = new Date();
+
+function getStartupTime() {
+    return startupTime;
+}
+
 /** @type {string: string} */
 const exceptions = {
     notFound: "Command %s is not found."
@@ -13,7 +19,6 @@ let commands = [];
 /** @type {string[]} */
 let commandHistory = [];
 let cursor = 0;
-
 let username = "root";
 let hostname = "moakdoge.dev";
 
@@ -101,25 +106,32 @@ function aliasCommand(new_inp, old) {
     }
 }
 
+/** @param {string} content */
 function formatContent(content) {
-    content = content
-        .replace(/(^|\r?\n)### (.+?)(?=\r?\n|$)/gm, "$1<h3>$2</h3>")
-        .replace(/(^|\r?\n)## (.+?)(?=\r?\n|$)/gm, "$1<h2>$2</h2>")
-        .replace(/(^|\r?\n)# (.+?)(?=\r?\n|$)/gm, "$1<h1>$2</h1>")
-        .replace(/(^|\r?\n)-# (.+?)(?=\r?\n|$)/gm, "$1<small>$2</small>")
-        .replace(/__(.+?)__/g, '<u>$1</u>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/~~(.+?)~~/g, '<del>$1</del>')
-        .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>')
-        .replace(/\|([^|]+)\|/g, '<a href="#" class="command-text command-link" data-command="$1">$1</a>')
-        .replace(/&&([^&]+)&&/g, '<span class="colored-text">$1</span>')
-        .replace(/`([^`]+)`/g, '<span class="command-text">$1</span>')
-        .replace(
-            /\[([^\]]+)\]\(([^)\s]+)\)/g,
-            '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-        )
-        .replace(/\\n|\r?\n/g, "<br>");
+    const disableFormattingMarker = "--disable-text-formatting--";
+    const disableFormatting = content.includes(disableFormattingMarker);
 
+    if (!disableFormatting) {
+        content = content
+            .replace(/(^|\r?\n)### (.+?)(?=\r?\n|$)/gm, "$1<h3>$2</h3>")
+            .replace(/(^|\r?\n)## (.+?)(?=\r?\n|$)/gm, "$1<h2>$2</h2>")
+            .replace(/(^|\r?\n)# (.+?)(?=\r?\n|$)/gm, "$1<h1>$2</h1>")
+            .replace(/(^|\r?\n)-# (.+?)(?=\r?\n|$)/gm, "$1<small>$2</small>")
+            .replace(/__(.+?)__/g, '<u>$1</u>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/~~(.+?)~~/g, '<del>$1</del>')
+            .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>')
+            .replace(/\|([^|]+)\|/g, '<a href="#" class="command-text command-link" data-command="$1">$1</a>')
+            .replace(/&&([^&]+)&&/g, '<span class="colored-text">$1</span>')
+            .replace(/`([^`]+)`/g, '<span class="command-text">$1</span>')
+            .replace(
+                /\[([^\]]+)\]\(([^)\s]+)\)/g,
+                '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+            )
+            .replace(/\\n|\r?\n/g, "<br>");
+    } else {
+        content = content.replace(disableFormattingMarker, "");
+    }
     for (let name in string_variables){
         let callback = string_variables[name];
         let replacement = String(callback());
@@ -273,62 +285,3 @@ document.addEventListener('click', (e) => {
     }
 })
 
-/* Handling the string variables */
-
-registerStringVariable("username", function() {
-    return username;
-});
-
-registerStringVariable("hostname", function() {
-    return hostname;
-});
-
-registerStringVariable("useragent", function() {
-    return navigator.userAgent;
-});
-
-registerStringVariable("width", function() {
-    return String(window.screen.width);
-});
-
-registerStringVariable("height", function() {
-    return String(window.screen.height);
-});
-
-
-registerStringVariable("age", function() {
-    return Math.floor((Date.now() - birthday.getTime()) / 3.15576e10);
-});
-
-
-/* time */
-registerStringVariable("milisecond", function() {
-    return Math.floor(Date.now()) % 1000;
-});
-registerStringVariable("second", function() {
-    return Math.floor(Date.now() / 1000) % 60;
-});
-registerStringVariable("minute", function() {
-    return Math.floor(Date.now() / 60000) % 60;
-});
-registerStringVariable("hour", function() {
-    return new Date().getHours();
-});
-registerStringVariable("day", function() {
-    return new Date().getDate();
-});
-registerStringVariable("month", function() {
-    return new Date().getMonth() + 1;
-});
-registerStringVariable("longmonth", function() {
-    return new Date().toLocaleString('en-US', { month: 'long' });
-});
-registerStringVariable("year", function() {
-    return new Date().getFullYear();
-});
-registerStringVariable("longyear", function() {
-    return new Date().toLocaleString('en-US', { year: 'numeric' });
-});
-registerStringVariable("weekday", function() {
-    return new Date().toLocaleString('en-US', { weekday: 'long' });
-});

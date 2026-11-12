@@ -16,7 +16,7 @@ test command: |about|
 username: %username
 hostname: %hostname
 useragent: %useragent
-resolution (width and height): %width x % height
+resolution (width and height): %width x %height
 age: %age
 
 ## time
@@ -31,3 +31,11 @@ year: %year
 weekday: %weekday
 
 full date: It is currently %weekday on %longmonth, %day, %longyear at %hour:%minute:%second.%milisecond
+
+## Uptime
+
+uptime-miliseconds: %uptime-milisecond
+uptime-second: %uptime-second
+uptime-minute: %uptime-minute
+uptime-hour: %uptime-hour
+uptime-day: %uptime-day
