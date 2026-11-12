@@ -3,6 +3,7 @@ const inputPrompt = document.getElementById("input-prompt");
 const inputPromptText = document.getElementById("prompt-text");
 const commandInput = document.getElementById("command-input");
 const mainBody = document.getElementById("main-body");
+const birthday = new Date("2010-03-17T15:00:04.000Z");
 /** @type {string: string} */
 const exceptions = {
     notFound: "Command %s is not found."
@@ -15,6 +16,15 @@ let cursor = 0;
 
 let username = "root";
 let hostname = "moakdoge.dev";
+
+
+/** @type {string: string} */
+let cached_messages = {}
+
+
+/** @type {string: function} */
+let string_variables = {}
+
 class MainCommand {
     constructor(name, description, author, callback, hidden) {
         this.name = name;
@@ -36,14 +46,30 @@ function registerCommand(name, description, author, callback, hidden = false) {
     new MainCommand(name, description, author, callback, hidden);
 }
 
-function registerStupidCommand(name, error) {
+/** @param {string | callback} callback */
+function registerStringVariable(name, callback) {
+    if (typeof(callback) == String) { 
+        function _() {
+            return callback;
+        }
+        callback = _;
+    }
+    string_variables[name] = callback
+}
+function registerStupidCommand(name, error, hidden=true, description="We don't know...", author="N/A") {
+    if (error.startsWith("$message")) {
+        error = String(error).replace("$message", "");
+        error = error.trim();
+
+        error = loadMessage(error);
+    }
     function callback() {
         printToLog(error);
     }
-    new MainCommand(name, "We don't know...", "N/A", callback, true);
+    new MainCommand(name, description, author, callback, hidden);
 }
 function getPrompt() {
-    return username + "@" + hostname + " >  ";
+    return username + "@" + hostname + " > ";
 }
 
 function clearLog() {
@@ -56,18 +82,35 @@ function clearLog() {
 }
 
 
+function loadMessage(message_id) {
+    if (cached_messages[message_id] != undefined) {
+        return cached_messages[message_id];
+    }
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `/messages/${message_id}.txt`, false); // false = synchronous
+    xhr.send(null);
+    let ans = xhr.response;
+    cached_messages[message_id] = ans;
+    return ans;
+}
+
 function aliasCommand(new_inp, old) {
     let found = findCommand(old);
     if (found) {
         found.aliases.push(new_inp);
     }
 }
-function printToLog(content) {
-    let mainDiv = document.createElement("div");
-    mainDiv.className = "log";
-    let contentItem = document.createElement("span");
-    contentItem.className = "content";
-    contentItem.innerHTML = content
+
+function formatContent(content) {
+    content = content
+        .replace(/(^|\r?\n)### (.+?)(?=\r?\n|$)/gm, "$1<h3>$2</h3>")
+        .replace(/(^|\r?\n)## (.+?)(?=\r?\n|$)/gm, "$1<h2>$2</h2>")
+        .replace(/(^|\r?\n)# (.+?)(?=\r?\n|$)/gm, "$1<h1>$2</h1>")
+        .replace(/(^|\r?\n)-# (.+?)(?=\r?\n|$)/gm, "$1<small>$2</small>")
+        .replace(/__(.+?)__/g, '<u>$1</u>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/~~(.+?)~~/g, '<del>$1</del>')
+        .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>')
         .replace(/\|([^|]+)\|/g, '<a href="#" class="command-text command-link" data-command="$1">$1</a>')
         .replace(/&&([^&]+)&&/g, '<span class="colored-text">$1</span>')
         .replace(/`([^`]+)`/g, '<span class="command-text">$1</span>')
@@ -76,6 +119,24 @@ function printToLog(content) {
             '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
         )
         .replace(/\\n|\r?\n/g, "<br>");
+
+    for (let name in string_variables){
+        let callback = string_variables[name];
+        let replacement = String(callback());
+        content = content.replaceAll(`%${name}`, replacement);
+    }
+
+    return content;
+}
+function printToLog(content) {
+    let fixed_content = formatContent(content)
+    let mainDiv = document.createElement("div");
+    mainDiv.className = "log";
+    let contentItem = document.createElement("span");
+    contentItem.className = "content";
+    contentItem.innerHTML = fixed_content
+
+    
     mainDiv.appendChild(contentItem);
     terminalLog.insertBefore(mainDiv, inputPrompt);
     scrollToBottom();
@@ -164,7 +225,7 @@ function raiseError(command, message) {
 }
 function submitPrompt() {
     //For now, this'll just handle the equivalent of an enter
-    let command = commandInput.value;
+    let command = commandInput.value.trim();
     let combined = `&&${getPrompt() + command}&&`;
     printToLog(combined);
     let parts = processCommandInput(command);
@@ -206,8 +267,68 @@ document.addEventListener('click', (e) => {
     if (cmdElement) {
         e.preventDefault();
         const command = cmdElement.dataset.command || cmdElement.textContent;
-        commandInput.value = command;
+        commandInput.value = String(command).trim();
         resizeCommandInput();
         submitPrompt();
     }
 })
+
+/* Handling the string variables */
+
+registerStringVariable("username", function() {
+    return username;
+});
+
+registerStringVariable("hostname", function() {
+    return hostname;
+});
+
+registerStringVariable("useragent", function() {
+    return navigator.userAgent;
+});
+
+registerStringVariable("width", function() {
+    return String(window.screen.width);
+});
+
+registerStringVariable("height", function() {
+    return String(window.screen.height);
+});
+
+
+registerStringVariable("age", function() {
+    return Math.floor((Date.now() - birthday.getTime()) / 3.15576e10);
+});
+
+
+/* time */
+registerStringVariable("milisecond", function() {
+    return Math.floor(Date.now()) % 1000;
+});
+registerStringVariable("second", function() {
+    return Math.floor(Date.now() / 1000) % 60;
+});
+registerStringVariable("minute", function() {
+    return Math.floor(Date.now() / 60000) % 60;
+});
+registerStringVariable("hour", function() {
+    return new Date().getHours();
+});
+registerStringVariable("day", function() {
+    return new Date().getDate();
+});
+registerStringVariable("month", function() {
+    return new Date().getMonth() + 1;
+});
+registerStringVariable("longmonth", function() {
+    return new Date().toLocaleString('en-US', { month: 'long' });
+});
+registerStringVariable("year", function() {
+    return new Date().getFullYear();
+});
+registerStringVariable("longyear", function() {
+    return new Date().toLocaleString('en-US', { year: 'numeric' });
+});
+registerStringVariable("weekday", function() {
+    return new Date().toLocaleString('en-US', { weekday: 'long' });
+});

@@ -1,0 +1,4 @@
+Hey! I'm @moakdoge, a %age year old kid who likes to program.
+To learn more about what I code in, run |languages|.
+To contact me, run |socials|.
+For more information on me, run |about|.

@@ -1,0 +1,14 @@
+Okay, look. I've never understood why exactly AI use even matters in relation to code.
+I'll be honest. This site absolutely has some vibe coding involved.
+But here's my view on this: AI is a tool. It's amazing for finding bugs 
+or cleaning up behavior or generating boilerplate. AI here was mostly used to fix
+my terribly made CSS and boilerplate. 
+
+Do I support entirely AI generated games? Absolutely not. But AI use as an assistant to programming is perfectly okay
+and actually recommeded because AI can find things I'd as a human completely miss.
+
+None of this applies to AI art. Make your own art. With the only exception of git commits and
+maybe code comments AI shouldn't be used for story games, either. 
+
+What I'm saying is this: If you now hate this site because "oh its vibe coded!!", go fuck yourself.
+It's my site. Deal with it.

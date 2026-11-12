@@ -1,0 +1,2 @@
+You can find the source code at my [github](https://github.com/moakdoge/moak-site).
+Note: AI use was involved. Learn more by running |ai-use|.

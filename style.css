@@ -23,6 +23,7 @@ html, body {
     display: flex;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     height: 100%;
     max-height: 100vh;
     box-sizing: border-box;
@@ -35,8 +36,16 @@ html, body {
 .log {
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     height: fit-content;
     overflow-wrap: anywhere;
+}
+
+.content,
+.content pre {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
 }
 .content {
     color: var(--output-color);

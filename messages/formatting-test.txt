@@ -1,0 +1,33 @@
+# h1
+## h2
+### h3
+
+*italics*
+**bold**
+__underline__
+~~strikeout~~
+
+~~__***all of them***__~~
+-# smol text
+
+&&haxxor text&&
+test command: |about|
+
+username: %username
+hostname: %hostname
+useragent: %useragent
+resolution (width and height): %width x % height
+age: %age
+
+## time
+
+milisecond: %milisecond
+second: %second
+minute: %minute
+hour: %hour
+day: %day
+month: %month
+year: %year
+weekday: %weekday
+
+full date: It is currently %weekday on %longmonth, %day, %longyear at %hour:%minute:%second.%milisecond
