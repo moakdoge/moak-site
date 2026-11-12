@@ -6,7 +6,7 @@ const mainBody = document.getElementById("main-body");
 const birthday = new Date("2010-03-17T15:00:04.000Z");
 const startupTime = new Date();
 
-function getStartupTime() {
+async function getStartupTime() {
     return startupTime;
 }
 
@@ -27,7 +27,7 @@ let hostname = "moakdoge.dev";
 let cached_messages = {}
 
 
-/** @type {string: function} */
+/** @type {string: async function} */
 let string_variables = {}
 
 class MainCommand {
@@ -47,37 +47,37 @@ class MainCommand {
     }
 }
 
-function registerCommand(name, description, author, callback, hidden = false) {
+async function registerCommand(name, description, author, callback, hidden = false) {
     new MainCommand(name, description, author, callback, hidden);
 }
 
 /** @param {string | callback} callback */
-function registerStringVariable(name, callback) {
+async function registerStringVariable(name, callback) {
     if (typeof(callback) == String) { 
-        function _() {
+        async function _() {
             return callback;
         }
         callback = _;
     }
     string_variables[name] = callback
 }
-function registerStupidCommand(name, error, hidden=true, description="We don't know...", author="N/A") {
+async function registerStupidCommand(name, error, hidden=true, description="We don't know...", author="N/A") {
     if (error.startsWith("$message")) {
         error = String(error).replace("$message", "");
         error = error.trim();
 
-        error = loadMessage(error);
+        error = await loadMessage(error);
     }
-    function callback() {
-        printToLog(error);
+    async function callback() {
+        await printToLog(error);
     }
     new MainCommand(name, description, author, callback, hidden);
 }
-function getPrompt() {
+async function getPrompt() {
     return username + "@" + hostname + " > ";
 }
 
-function clearLog() {
+async function clearLog() {
     for (let i = terminalLog.children.length - 1; i >= 0; i--) {
         let child = terminalLog.children[i];
         if (child !== inputPrompt) {
@@ -87,7 +87,7 @@ function clearLog() {
 }
 
 
-function loadMessage(message_id) {
+async function loadMessage(message_id) {
     if (cached_messages[message_id] != undefined) {
         return cached_messages[message_id];
     }
@@ -99,15 +99,15 @@ function loadMessage(message_id) {
     return ans;
 }
 
-function aliasCommand(new_inp, old) {
-    let found = findCommand(old);
+async function aliasCommand(new_inp, old) {
+    let found = await findCommand(old);
     if (found) {
         found.aliases.push(new_inp);
     }
 }
 
 /** @param {string} content */
-function formatContent(content) {
+async function formatContent(content) {
     const disableFormattingMarker = "--disable-text-formatting--";
     const disableFormatting = content.includes(disableFormattingMarker);
 
@@ -134,14 +134,14 @@ function formatContent(content) {
     }
     for (let name in string_variables){
         let callback = string_variables[name];
-        let replacement = String(callback());
+        let replacement = String(await callback());
         content = content.replaceAll(`%${name}`, replacement);
     }
 
     return content;
 }
-function printToLog(content) {
-    let fixed_content = formatContent(content)
+async function printToLog(content) {
+    let fixed_content = await formatContent(content)
     let mainDiv = document.createElement("div");
     mainDiv.className = "log";
     let contentItem = document.createElement("span");
@@ -151,36 +151,36 @@ function printToLog(content) {
     
     mainDiv.appendChild(contentItem);
     terminalLog.insertBefore(mainDiv, inputPrompt);
-    scrollToBottom();
+    await scrollToBottom();
 }
 
-function initPrompt() {
-    inputPromptText.textContent = getPrompt();
+async function initPrompt() {
+    inputPromptText.textContent = await getPrompt();
     commandInput.value = "";
     if (cursor != 0 && cursor <= commandHistory.length) {
         commandInput.value = commandHistory[commandHistory.length - cursor];
     } else {
         cursor = 0;
     }
-    resizeCommandInput();
+    await resizeCommandInput();
 }
 
-function scrollToBottom() {
+async function scrollToBottom() {
     requestAnimationFrame(() => {
         terminalLog.scrollTop = terminalLog.scrollHeight;
     });
 }
 
-function resizeCommandInput() {
+async function resizeCommandInput() {
     commandInput.style.width = Math.max(commandInput.value.length, 1) + "ch";
-    scrollToBottom();
+    await scrollToBottom();
 }
 /**
  * Splits input into tokens while preserving quoted arguments.
  * @param {string} raw - The raw input command string.
  * @returns {string[]} An array of parsed arguments.
  */
-function processCommandInput(raw) {
+async function processCommandInput(raw) {
     const regex = /"[^"]*"|'[^']*'|\S+/g;
   const matches = raw.match(regex) || [];
 
@@ -201,7 +201,7 @@ function processCommandInput(raw) {
  * @param {string} name 
  * @returns {MainCommand?}
  */
-function findCommand(name) {
+async function findCommand(name) {
     for (let i = 0; i < commands.length; i++) {
         let command = commands[i];
         if (command.name == name) {
@@ -216,57 +216,57 @@ function findCommand(name) {
   *  @param {string[]} args
   *  @return {bool} success (true if succeeded; otherwise false)
 */
-function runCommand(args) {
+async function runCommand(args) {
     let commandName = args[0];
-    let found = findCommand(commandName);
+    let found = await findCommand(commandName);
     commandHistory.push(args.join(" "));
     if (found) {
-        found.callback(args);
+        await found.callback(args);
         cursor = 0;
-        scrollToBottom();
+        await scrollToBottom();
         return true;
     }
-    scrollToBottom();
+    await scrollToBottom();
     return false;
 }
 
-function raiseError(command, message) {
+async function raiseError(command, message) {
     const error = message.replace("%s", command);
     const combined = `<span style="color: red;">${error}</span>`;
-    printToLog(combined);
+    await printToLog(combined);
 }
-function submitPrompt() {
+async function submitPrompt() {
     //For now, this'll just handle the equivalent of an enter
     let command = commandInput.value.trim();
-    let combined = `&&${getPrompt() + command}&&`;
-    printToLog(combined);
-    let parts = processCommandInput(command);
-    let success = runCommand(parts);
+    let combined = `&&${await getPrompt() + command}&&`;
+    await printToLog(combined);
+    let parts = await processCommandInput(command);
+    let success = await runCommand(parts);
     if (!success) {
-        raiseError(parts[0], exceptions.notFound);
+        await raiseError(parts[0], exceptions.notFound);
     }
 
-    initPrompt();
-    scrollToBottom();
+    await initPrompt();
+    await scrollToBottom();
 }
 
 initPrompt();
 
-commandInput.addEventListener('input', resizeCommandInput);
+commandInput.addEventListener('input', async () => await resizeCommandInput());
 
-inputPrompt.addEventListener('keydown', (e) => {
+inputPrompt.addEventListener('keydown', async (e) => {
     if (e.key === 'Enter') {
-        submitPrompt();
+        await submitPrompt();
     }
     if (e.key === 'ArrowUp') {
         e.preventDefault();
         cursor++;
-        initPrompt();
+        await initPrompt();
     }
     if (e.key === 'ArrowDown') {
         e.preventDefault();
         cursor--;
-        initPrompt();
+        await initPrompt();
     }
 });
 
@@ -274,14 +274,14 @@ mainBody.addEventListener("click", (e) => {
     commandInput.focus();
 })
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
     const cmdElement = e.target.closest('.command-text');
     if (cmdElement) {
         e.preventDefault();
         const command = cmdElement.dataset.command || cmdElement.textContent;
         commandInput.value = String(command).trim();
-        resizeCommandInput();
-        submitPrompt();
+        await resizeCommandInput();
+        await submitPrompt();
     }
 })
 

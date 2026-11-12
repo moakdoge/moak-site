@@ -13,7 +13,8 @@
     <script src="backend.js"></script>
     <script src="variables.js"></script>
     <script>
-        registerCommand("help",  "Helps you.", "moakdoge", function (args){
+        (async function () {
+        await registerCommand("help",  "Helps you.", "moakdoge", async function (args){
             for (let command in commands) {
                 let description = commands[command].description;
 
@@ -24,42 +25,42 @@
                 if (commands[command].hidden) {
                     continue;
                 }
-                printToLog(commands[command].name + ": " + description);
+                await printToLog(commands[command].name + ": " + description);
             }
         })
 
-        registerCommand("echo",  "Echoes your input.", "moakdoge", function (args){
+        await registerCommand("echo",  "Echoes your input.", "moakdoge", async function (args){
             let output = args.slice(1).join(" ");
-            printToLog(output);
+            await printToLog(output);
         });
 
-        registerCommand("history", "Shows the command history.", "moakdoge", function (args){
+        await registerCommand("history", "Shows the command history.", "moakdoge", async function (args){
             for (let i = 0; i < commandHistory.length; i++) {
-                printToLog(commandHistory[i]);
+                await printToLog(commandHistory[i]);
             }
         })
 
-        registerCommand("whoami",  "Tells you a bit about me", "moakdoge", function (args){
-            printToLog(loadMessage("whoami"));
+        await registerCommand("whoami",  "Tells you a bit about me", "moakdoge", async function (args){
+            await printToLog(await loadMessage("whoami"));
         });
 
-        registerCommand("languages", "My programming languages", "moakdoge", function (args) {
+        await registerCommand("languages", "My programming languages", "moakdoge", async function (args) {
             let myLangs = {
                 python: new Date("2023-8-10"),
                 lua: new Date("2020-11-23"),
                 "C++": new Date("2025-8-15"),
             }
 
-            Object.entries(myLangs).forEach(function ([name, date]){
+            for (const [name, date] of Object.entries(myLangs)) {
                 const now = date;
                 const month = now.toLocaleString('en-US', { month: 'short' });
                 const year = now.getFullYear();
-                printToLog("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year))
-            })
+                await printToLog("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year));
+            }
             
         })
 
-        registerCommand("socials", "My social medias", "moakdoge", function (args) {
+        await registerCommand("socials", "My social medias", "moakdoge", async function (args) {
            
             let mySocials = {
                 GitHub: {handle: "@moakdoge", link: "https://github.com/moakdoge",},
@@ -69,7 +70,7 @@
             
             };
 
-            Object.entries(mySocials).forEach(function ([name, info]){
+            for (const [name, info] of Object.entries(mySocials)) {
                 const handle = info.handle;
                 const link = info.link;
 
@@ -78,21 +79,23 @@
                 .replace("%username", handle)
                 .replace("%link", link);
 
-                printToLog(output);
+                await printToLog(output);
 
-            });
+            }
         })
 
-        registerCommand("clear", "Clears the terminal", "moakdoge", clearLog);
+        await registerCommand("clear", "Clears the terminal", "moakdoge", async function () {
+            await clearLog();
+        });
 
 
-        registerCommand("eval", "Evaluates an input.", "moakdoge", function (args) {
+        await registerCommand("eval", "Evaluates an input.", "moakdoge", async function (args) {
             let fixed = args.slice(1).join(" ");
             let val = eval(fixed);
-            printToLog(val?.toString() ?? "No output");
+            await printToLog(val?.toString() ?? "No output");
         })
         
-
+        
         registerStupidCommand("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
         registerStupidCommand("about", "$message about", false, "About me.", "moakdoge");
 
@@ -130,42 +133,43 @@
         aliasCommand("yay", "pacman");
         aliasCommand("apt-get", "apt");
 
-        registerStupidCommand("ai-use", `$message ai-use`, false, "How AI was used on this site.", "moakdoge");
+        await registerStupidCommand("ai-use", `$message ai-use`, false, "How AI was used on this site.", "moakdoge");
 
-        registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", function (args) {
+        await registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", async function (args) {
             let newHostName = args[1];
             if (newHostName == undefined) {
-                printToLog(`Your current hostname is ${hostname}.`);
+                await printToLog(`Your current hostname is ${hostname}.`);
                 return;
             }
             hostname = newHostName;
-            printToLog(`Fine, I'll change the hostname. Grumble. Your new hostname is ${hostname}.`)
+            await printToLog(`Fine, I'll change the hostname. Grumble. Your new hostname is ${hostname}.`)
         });
-        registerCommand("username", `Sets or reads your username. Defaults to ${username}.`, "moakdoge", function (args) {
+        await registerCommand("username", `Sets or reads your username. Defaults to ${username}.`, "moakdoge", async function (args) {
             let newUser = args[1];
             if (newUser == undefined) {
-                printToLog(`Your current username is ${username}.`);
+                await printToLog(`Your current username is ${username}.`);
                 return;
             }
             username = newUser;
-            printToLog(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${username}.`)
+            await printToLog(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${username}.`)
         });
 
-        registerCommand("fastfetch", "Gets some information about this 'OS'.", "moakdoge",function (args) {
-            let fixed = loadMessage("fastfetch");
+        await registerCommand("fastfetch", "Gets some information about this 'OS'.", "moakdoge", async function (args) {
+            let fixed = await loadMessage("fastfetch");
 
-            printToLog("<pre>"+fixed+"</pre>");
+            await printToLog("<pre>"+fixed+"</pre>");
         })
 
         /* debug commands i may or may not remove */
-        registerStupidCommand("formatting-test", "$message formatting-test");
+        await registerStupidCommand("formatting-test", "$message formatting-test");
 
         /* You guys are laughing at me. For sure. I don't care if it works it works*/
-        runCommand(processCommandInput("whoami"));
-        runCommand(processCommandInput("echo '---------------------'"));
-        runCommand(processCommandInput("help"));
-        runCommand(processCommandInput("\n"));
+        await runCommand(await processCommandInput("whoami"));
+        await runCommand(await processCommandInput("echo '---------------------'"));
+        await runCommand(await processCommandInput("help"));
+        await runCommand(await processCommandInput("\n"));
         commandHistory = [];
+        })();
     </script>
 </body>
 </html>
