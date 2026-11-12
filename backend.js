@@ -252,6 +252,50 @@ async function submitPrompt() {
 
 initPrompt();
 
+async function createWindow(x, y) {
+    const newElement = document.createElement("div");
+    newElement.className = "window";
+    newElement.style.zIndex = 999;
+    newElement.style.width = `${String(x)}%`;
+    newElement.style.height = `${String(y)}%`;
+    mainBody.appendChild(newElement)
+    return newElement;
+}
+
+const windowElement = document.getElementById("window");
+const titleBar = document.querySelector(".title-bar");
+let dragOffset = null;
+
+titleBar.addEventListener("pointerdown", (e) => {
+    const bounds = windowElement.getBoundingClientRect();
+    dragOffset = {
+        x: e.clientX - bounds.left,
+        y: e.clientY - bounds.top
+    };
+    titleBar.setPointerCapture(e.pointerId);
+    titleBar.style.cursor = "grabbing";
+});
+
+titleBar.addEventListener("pointermove", (e) => {
+    if (dragOffset === null) {
+        return;
+    }
+
+    windowElement.style.position = "fixed";
+    windowElement.style.transform = "none";
+    windowElement.style.left = `${e.clientX - dragOffset.x}px`;
+    windowElement.style.top = `${e.clientY - dragOffset.y}px`;
+});
+
+const stopDragging = (e) => {
+    dragOffset = null;
+    titleBar.releasePointerCapture?.(e.pointerId);
+    titleBar.style.cursor = "grab";
+};
+
+titleBar.addEventListener("pointerup", stopDragging);
+titleBar.addEventListener("pointercancel", stopDragging);
+
 commandInput.addEventListener('input', async () => await resizeCommandInput());
 
 inputPrompt.addEventListener('keydown', async (e) => {
@@ -268,11 +312,16 @@ inputPrompt.addEventListener('keydown', async (e) => {
         cursor--;
         await initPrompt();
     }
+
+    if (e.key == "Tab") {
+        e.preventDefault();
+    }
 });
 
 mainBody.addEventListener("click", (e) => {
     commandInput.focus();
 })
+
 
 document.addEventListener('click', async (e) => {
     const cmdElement = e.target.closest('.command-text');

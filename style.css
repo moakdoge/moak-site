@@ -2,6 +2,7 @@
     --background-color: #000000;
     --text-color: #00ff22;
     --output-color: #ffffff;
+    --window-color: #33313191;
     --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
     --font-size: 1vw;
     font-size: 1rem;
@@ -9,14 +10,104 @@
 html::-webkit-scrollbar {
     display: none;
 }
+@property --dot-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: rgba(0, 255, 136, 0.15);
+}
+@property --dot-size {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 3px;
+}
+
+@keyframes bg-move {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 240px 240px;
+    }
+}
+
+@keyframes bg-color {
+    from {
+        --dot-color: rgba(0, 255, 136, 0.15);
+        --dot-size: 2px;
+    }
+
+    to {
+        --dot-color: rgba(6, 180, 99, 0.45);
+        --dot-size: 1px;
+    }
+}
+
 html, body {
-    background: var(--background-color);
-    width: 100%;
-    height: 100%;
+    width: 120%;
+    height: 120%;
+    left: -20%;
+    top: -20%;
+    position: absolute;
     font-family: var(--font);
     overflow-x: hidden;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    background-image: radial-gradient(
+        var(--dot-color) 0,
+        var(--dot-color) var(--dot-size),
+        transparent calc(var(--dot-size) + 1px)
+    );
+    background-size: 24px 24px;
+    animation: bg-move 5s linear infinite, bg-color 10s ease-in-out infinite alternate;
+}
+
+
+.window {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background-color: var(--window-color);
+    border-color: var(--text-color);
+    border-radius: 2px;
+    border: var(--text-color);
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+}
+
+.title-bar {
+    height:7%;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    user-select: none;
+}
+
+.title-bar:hover {
+    cursor: grab;
+}
+
+.title-bar {
+    touch-action: none;
+}
+
+.title-bar p {
+    font-family: inherit;
+    color: var(--text-color);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
 }
 
 .content h1,
@@ -38,6 +129,7 @@ html, body {
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
+    padding: 8px;
 }
 
 .log {
@@ -67,7 +159,7 @@ html, body {
     padding: 0px;
 }
 .command-box {
-    background-color: var(--background-color);
+    background-color: #00000000;
     color: var(--text-color);
     font: inherit;
     appearance: none;
@@ -75,15 +167,12 @@ html, body {
     outline: none;
     width: 1ch;
     padding: 0;
+    
 }
 
 .command-text {
     text-decoration: underline;
     color: red;
-}
-
-.link  {
-    
 }
 
 .command-text:hover {
@@ -92,4 +181,25 @@ html, body {
 
 .command-box:focus {
     cursor: none;
+}
+
+
+.info-section {
+    position: absolute;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+
+    left: 80%;
+    top: 80%;
+    display: flex;
+    background-color: #e9ecea00;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: end;
+}
+
+.info-section p {
+    color: #fdfdfd27;
+    margin: 5px;
 }

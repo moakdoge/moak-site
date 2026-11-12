@@ -3,226 +3,242 @@
 <html>
 <title>moakdoge.dev</title>
 <meta name="viewport" content="width-device-width, initial-scale=1.0">
+
 <body id="main-body">
-    <div class="term-log" id="term-log">
-        <div class="input" id="input-prompt">
-            <span class="prompt" id="prompt-text">you@moakdoge.dev > </span>
-            <input class="command-box" id="command-input" value="test" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off">
+    <div class="window" id="window">
+        <div class="title-bar">
+            <p>Example Title</p>
         </div>
+        
+        <div class="info-section">
+            <p>moakdoge.dev</p>
+        </div>
+        <div class="term-log" id="term-log">
+            <div class="input" id="input-prompt">
+                <span class="prompt" id="prompt-text">you@moakdoge.dev > </span>
+                <input class="command-box" id="command-input" value="test" spellcheck="false" autocorrect="off"
+                    autocapitalize="off" autocomplete="off">
+            </div>
+        </div>
+        <script src="file_system.js"></script>
+        <script src="backend.js"></script>
+        <script src="variables.js"></script>
+        <script>
+            /// <refrence path="./file_system.js" />
+
+
+
+            (async function () {
+                await registerCommand("help", "Helps you.", "moakdoge", async function (args) {
+                    for (let command in commands) {
+                        let description = commands[command].description;
+
+                        if (description == undefined) {
+                            continue;
+                        }
+
+                        if (commands[command].hidden) {
+                            continue;
+                        }
+                        await printToLog(commands[command].name + ": " + description);
+                    }
+                })
+
+                await registerCommand("echo", "Echoes your input.", "moakdoge", async function (args) {
+                    let output = args.slice(1).join(" ");
+                    await printToLog(output);
+                });
+
+                await registerCommand("history", "Shows the command history.", "moakdoge", async function (args) {
+                    for (let i = 0; i < commandHistory.length; i++) {
+                        await printToLog(commandHistory[i]);
+                    }
+                })
+
+                await registerCommand("whoami", "Tells you a bit about me", "moakdoge", async function (args) {
+                    await printToLog(await loadMessage("whoami"));
+                });
+
+                await registerCommand("languages", "My programming languages", "moakdoge", async function (args) {
+                    let myLangs = {
+                        python: new Date("2023-8-10"),
+                        lua: new Date("2020-11-23"),
+                        "C++": new Date("2025-8-15"),
+                    }
+
+
+                    for (const [name, date] of Object.entries(myLangs)) {
+                        const now = date;
+                        const month = now.toLocaleString('en-US', { month: 'short' });
+                        const year = now.getFullYear();
+                        await printToLog("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year));
+                    }
+
+                })
+
+                await registerCommand("socials", "My social medias", "moakdoge", async function (args) {
+
+                    let mySocials = {
+                        GitHub: { handle: "@moakdoge", link: "https://github.com/moakdoge", },
+                        YouTube: { handle: "@moakdoge", link: "https://www.youtube.com/@moakdoge" },
+                        Discord: { handle: "@moakdoge", link: "https://discord.com/users/866493074699321354" },
+                        Email: { handle: "root@moakdoge.dev", link: "mailto:root.moakdoge.dev" }
+
+                    };
+
+                    for (const [name, info] of Object.entries(mySocials)) {
+                        const handle = info.handle;
+                        const link = info.link;
+
+                        let output = "%name: [%username](%link)"
+                            .replace("%name", name)
+                            .replace("%username", handle)
+                            .replace("%link", link);
+
+                        await printToLog(output);
+
+                    }
+                })
+
+                await registerCommand("clear", "Clears the terminal", "moakdoge", async function () {
+                    await clearLog();
+                });
+
+
+                await registerCommand("eval", "Evaluates an input.", "moakdoge", async function (args) {
+                    let fixed = args.slice(1).join(" ");
+                    let val = eval(fixed);
+                    await printToLog(val?.toString() ?? "No output");
+                })
+
+                /* filesystem conmands... blech */
+                await registerCommand("ls", "Lists files in the current directory", "moakdoge", async function (args) {
+                    let directory = await fileManager._getCurrentDirectory();
+                    if (directory === null) {
+                        await printToLog("Unable to read the current directory.");
+                        return;
+                    }
+
+                    for (const child of directory.directories ?? []) {
+                        await printToLog(`**${child.name + "/"}**`);
+                    }
+                    for (const file of directory.files ?? []) {
+                        await printToLog(file.name);
+                    }
+                });
+
+                await registerCommand("cat", "Prints a file", "moakdoge", async function (args) {
+                    const path = args[1];
+                    if (path === undefined) {
+                        await printToLog("cat: missing file operand");
+                        return;
+                    }
+
+                    const content = await fileManager.readFile(path);
+                    if (content === null) {
+                        await printToLog("cat: no such file: " + path);
+                        return;
+                    }
+
+                    await printToLog("--disable-text-formatting--" + content);
+                });
+
+                const readOnlyFilesystemError = async function (args) {
+                    await raiseError(args[0], "Filesystem is read-only.");
+                };
+
+                await registerCommand("open-window", "Tests opening a window", "moakdoge", async function (args) {
+                    await createWindow(50, 50);
+                }, false)
+
+
+
+
+
+
+                await registerStupidCommand("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
+                await registerStupidCommand("about", "$message about", false, "About me.", "moakdoge");
+
+                /* Secret commands. You found them.*/
+                await registerStupidCommand("sudo", "... You're root.");
+                await registerStupidCommand("ssh", "I wish, man. I'm not that talented.");
+                await registerStupidCommand("moakdoge", "yep... that's me.");
+                await registerStupidCommand("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
+                await registerStupidCommand("reboot", "You really think a browser can reboot your computer?");
+                await registerStupidCommand("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
+                await registerCommand("mkdir", "Creates a directory", "moakdoge", readOnlyFilesystemError, true);
+                await registerStupidCommand("apt", "This is not Ubuntu!");
+                await registerStupidCommand("pacman", "This is not Arch! (i use arch btw)");
+                await registerStupidCommand("dnf", "This is not Fedora!");
+                await registerStupidCommand("zypper", "This is not openSUSE!");
+                await registerStupidCommand("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
+                await registerStupidCommand("xbps-install", "XBPS? What even is that? Who are you?");
+                await registerStupidCommand("apk", "This is not Alphine! (iSH? Random embedded? Who are you?");
+                await registerStupidCommand("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
+                await registerStupidCommand("curl", "Read |wget|, but this won't ever work.");
+                await registerCommand("cd", "Changes the current directory", "moakdoge", async function (args) {
+                    const path = args[1] ?? "/";
+                    const changed = await fileManager.setDirectory(path);
+                    if (!changed) {
+                        await printToLog("cd: no such directory: " + path);
+                    }
+                });
+                await registerCommand("pwd", "Prints the current directory", "moakdoge", async function () {
+                    await printToLog(await fileManager.getDirectory());
+                });
+                await registerCommand("cp", "Copies a file", "moakdoge", readOnlyFilesystemError, true);
+                await registerCommand("mv", "Moves a file", "moakdoge", readOnlyFilesystemError, true);
+                await registerCommand("rmdir", "Removes a directory", "moakdoge", readOnlyFilesystemError, true);
+                await registerCommand("rm", "Removes a file", "moakdoge", readOnlyFilesystemError, true);
+                await registerCommand("touch", "Creates a file", "moakdoge", readOnlyFilesystemError, true);
+                await registerStupidCommand("kill", "Can't kill anything here, bucko.");
+                await registerCommand("chmod", "Changes file permissions", "moakdoge", readOnlyFilesystemError, true);
+                await registerStupidCommand("ping", "Go do ping on your own terminal.");
+                await registerStupidCommand("arknight", "rose12344 made me add this. You know who you are.");
+                await aliasCommand("arknights", "arknight");
+                await aliasCommand("neofetch", "fastfetch");
+                await aliasCommand("yay", "pacman");
+                await aliasCommand("apt-get", "apt");
+
+                await registerStupidCommand("ai-use", `$message ai-use`, false, "How AI was used on this site.", "moakdoge");
+
+                await registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", async function (args) {
+                    let newHostName = args[1];
+                    if (newHostName == undefined) {
+                        await printToLog(`Your current hostname is ${hostname}.`);
+                        return;
+                    }
+                    hostname = newHostName;
+                    await printToLog(`Fine, I'll change the hostname. Grumble. Your new hostname is ${hostname}.`)
+                });
+                await registerCommand("username", `Sets or reads your username. Defaults to ${username}.`, "moakdoge", async function (args) {
+                    let newUser = args[1];
+                    if (newUser == undefined) {
+                        await printToLog(`Your current username is ${username}.`);
+                        return;
+                    }
+                    username = newUser;
+                    await printToLog(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${username}.`)
+                });
+
+                await registerCommand("fastfetch", "Gets some information about this 'OS'.", "moakdoge", async function (args) {
+                    let fixed = await loadMessage("fastfetch");
+
+                    await printToLog("<pre>" + fixed + "</pre>");
+                })
+
+                /* debug commands i may or may not remove */
+                await registerStupidCommand("formatting-test", "$message formatting-test");
+
+                /* You guys are laughing at me. For sure. I don't care if it works it works*/
+                await runCommand(await processCommandInput("whoami"));
+                await runCommand(await processCommandInput("echo '---------------------'"));
+                await runCommand(await processCommandInput("help"));
+                await runCommand(await processCommandInput("\n"));
+                commandHistory = [];
+            })();
+        </script>
     </div>
-    <script src="file_system.js"></script>
-    <script src="backend.js"></script>
-    <script src="variables.js"></script>
-    <script>
-        /// <refrence path="./file_system.js" />
-
-        
-        
-        (async function () {
-        await registerCommand("help",  "Helps you.", "moakdoge", async function (args){
-            for (let command in commands) {
-                let description = commands[command].description;
-
-                if (description == undefined) {
-                    continue;
-                }
-               
-                if (commands[command].hidden) {
-                    continue;
-                }
-                await printToLog(commands[command].name + ": " + description);
-            }
-        })
-
-        await registerCommand("echo",  "Echoes your input.", "moakdoge", async function (args){
-            let output = args.slice(1).join(" ");
-            await printToLog(output);
-        });
-
-        await registerCommand("history", "Shows the command history.", "moakdoge", async function (args){
-            for (let i = 0; i < commandHistory.length; i++) {
-                await printToLog(commandHistory[i]);
-            }
-        })
-
-        await registerCommand("whoami",  "Tells you a bit about me", "moakdoge", async function (args){
-            await printToLog(await loadMessage("whoami"));
-        });
-
-        await registerCommand("languages", "My programming languages", "moakdoge", async function (args) {
-            let myLangs = {
-                python: new Date("2023-8-10"),
-                lua: new Date("2020-11-23"),
-                "C++": new Date("2025-8-15"),
-            }
-            
-
-            for (const [name, date] of Object.entries(myLangs)) {
-                const now = date;
-                const month = now.toLocaleString('en-US', { month: 'short' });
-                const year = now.getFullYear();
-                await printToLog("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year));
-            }
-            
-        })
-
-        await registerCommand("socials", "My social medias", "moakdoge", async function (args) {
-           
-            let mySocials = {
-                GitHub: {handle: "@moakdoge", link: "https://github.com/moakdoge",},
-                YouTube: {handle: "@moakdoge", link: "https://www.youtube.com/@moakdoge"},
-                Discord: {handle: "@moakdoge", link: "https://discord.com/users/866493074699321354"},
-                Email: {handle: "root@moakdoge.dev", link: "mailto:root.moakdoge.dev"}
-            
-            };
-
-            for (const [name, info] of Object.entries(mySocials)) {
-                const handle = info.handle;
-                const link = info.link;
-
-                let output = "%name: [%username](%link)"
-                .replace("%name", name)
-                .replace("%username", handle)
-                .replace("%link", link);
-
-                await printToLog(output);
-
-            }
-        })
-
-        await registerCommand("clear", "Clears the terminal", "moakdoge", async function () {
-            await clearLog();
-        });
-
-
-        await registerCommand("eval", "Evaluates an input.", "moakdoge", async function (args) {
-            let fixed = args.slice(1).join(" ");
-            let val = eval(fixed);
-            await printToLog(val?.toString() ?? "No output");
-        })
-        
-        /* filesystem conmands... blech */
-        await registerCommand("ls", "Lists files in the current directory", "moakdoge", async function (args) {
-            let directory = await fileManager._getCurrentDirectory();
-            if (directory === null) {
-                await printToLog("Unable to read the current directory.");
-                return;
-            }
-
-            for (const child of directory.directories ?? []) {
-                await printToLog(`**${child.name + "/"}**`);
-            }
-            for (const file of directory.files ?? []) {
-                await printToLog(file.name);
-            }
-        });
-
-        await registerCommand("cat", "Prints a file", "moakdoge", async function (args) {
-            const path = args[1];
-            if (path === undefined) {
-                await printToLog("cat: missing file operand");
-                return;
-            }
-
-            const content = await fileManager.readFile(path);
-            if (content === null) {
-                await printToLog("cat: no such file: " + path);
-                return;
-            }
-
-            await printToLog("--disable-text-formatting--" + content);
-        });
-
-        const readOnlyFilesystemError = async function (args) {
-            await raiseError(args[0], "Filesystem is read-only.");
-        };
-
-
-        
-
-
-        
-        await registerStupidCommand("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
-        await registerStupidCommand("about", "$message about", false, "About me.", "moakdoge");
-
-        /* Secret commands. You found them.*/
-        await registerStupidCommand("sudo", "... You're root.");
-        await registerStupidCommand("ssh", "I wish, man. I'm not that talented.");
-        await registerStupidCommand("moakdoge", "yep... that's me.");
-        await registerStupidCommand("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
-        await registerStupidCommand("reboot", "You really think a browser can reboot your computer?");
-        await registerStupidCommand("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
-        await registerCommand("mkdir", "Creates a directory", "moakdoge", readOnlyFilesystemError, true);
-        await registerStupidCommand("apt", "This is not Ubuntu!");
-        await registerStupidCommand("pacman", "This is not Arch! (i use arch btw)");
-        await registerStupidCommand("dnf", "This is not Fedora!");
-        await registerStupidCommand("zypper", "This is not openSUSE!");
-        await registerStupidCommand("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
-        await registerStupidCommand("xbps-install", "XBPS? What even is that? Who are you?");
-        await registerStupidCommand("apk", "This is not Alphine! (iSH? Random embedded? Who are you?");
-        await registerStupidCommand("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
-        await registerStupidCommand("curl", "Read |wget|, but this won't ever work.");
-        await registerCommand("cd", "Changes the current directory", "moakdoge", async function (args) {
-            const path = args[1] ?? "/";
-            const changed = await fileManager.setDirectory(path);
-            if (!changed) {
-                await printToLog("cd: no such directory: " + path);
-            }
-        });
-        await registerCommand("pwd", "Prints the current directory", "moakdoge", async function () {
-            await printToLog(await fileManager.getDirectory());
-        });
-        await registerCommand("cp", "Copies a file", "moakdoge", readOnlyFilesystemError, true);
-        await registerCommand("mv", "Moves a file", "moakdoge", readOnlyFilesystemError, true);
-        await registerCommand("rmdir", "Removes a directory", "moakdoge", readOnlyFilesystemError, true);
-        await registerCommand("rm", "Removes a file", "moakdoge", readOnlyFilesystemError, true);
-        await registerCommand("touch", "Creates a file", "moakdoge", readOnlyFilesystemError, true);
-        await registerStupidCommand("kill", "Can't kill anything here, bucko.");
-        await registerCommand("chmod", "Changes file permissions", "moakdoge", readOnlyFilesystemError, true);
-        await registerStupidCommand("ping", "Go do ping on your own terminal.");
-        await registerStupidCommand("arknight", "rose12344 made me add this. You know who you are.");
-        await aliasCommand("arknights", "arknight");
-        await aliasCommand("neofetch", "fastfetch");
-        await aliasCommand("yay", "pacman");
-        await aliasCommand("apt-get", "apt");
-
-        await registerStupidCommand("ai-use", `$message ai-use`, false, "How AI was used on this site.", "moakdoge");
-
-        await registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", async function (args) {
-            let newHostName = args[1];
-            if (newHostName == undefined) {
-                await printToLog(`Your current hostname is ${hostname}.`);
-                return;
-            }
-            hostname = newHostName;
-            await printToLog(`Fine, I'll change the hostname. Grumble. Your new hostname is ${hostname}.`)
-        });
-        await registerCommand("username", `Sets or reads your username. Defaults to ${username}.`, "moakdoge", async function (args) {
-            let newUser = args[1];
-            if (newUser == undefined) {
-                await printToLog(`Your current username is ${username}.`);
-                return;
-            }
-            username = newUser;
-            await printToLog(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${username}.`)
-        });
-
-        await registerCommand("fastfetch", "Gets some information about this 'OS'.", "moakdoge", async function (args) {
-            let fixed = await loadMessage("fastfetch");
-
-            await printToLog("<pre>"+fixed+"</pre>");
-        })
-
-        /* debug commands i may or may not remove */
-        await registerStupidCommand("formatting-test", "$message formatting-test");
-
-        /* You guys are laughing at me. For sure. I don't care if it works it works*/
-        await runCommand(await processCommandInput("whoami"));
-        await runCommand(await processCommandInput("echo '---------------------'"));
-        await runCommand(await processCommandInput("help"));
-        await runCommand(await processCommandInput("\n"));
-        commandHistory = [];
-        })();
-    </script>
 </body>
+
 </html>
