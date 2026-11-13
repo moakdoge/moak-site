@@ -1,6 +1,6 @@
 {
     "name": "moakdoge.dev",
-    "short_name": "MoakDogeDev",
+    "short_name": "moakdoge.dev",
     "start_url": "/",
     "display": "standalone",
     "icons": [

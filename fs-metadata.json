@@ -4,13 +4,25 @@
     {
       "name": "favicon.ico",
       "extension": ".ico",
-      "size": 8703,
+      "size": 4286,
       "path": "favicon.ico"
+    },
+    {
+      "name": "sw.js",
+      "extension": ".js",
+      "size": 63,
+      "path": "sw.js"
+    },
+    {
+      "name": "manifest.json",
+      "extension": ".json",
+      "size": 779,
+      "path": "manifest.json"
     },
     {
       "name": "style.css",
       "extension": ".css",
-      "size": 1563,
+      "size": 4445,
       "path": "style.css"
     },
     {
@@ -22,7 +34,7 @@
     {
       "name": "index.html",
       "extension": ".html",
-      "size": 8737,
+      "size": 12658,
       "path": "index.html"
     },
     {
@@ -38,16 +50,10 @@
       "path": "LICENSE"
     },
     {
-      "name": "variables.js",
-      "extension": ".js",
-      "size": 2587,
-      "path": "variables.js"
-    },
-    {
-      "name": "backend.js",
-      "extension": ".js",
-      "size": 8519,
-      "path": "backend.js"
+      "name": "jsconfig.json",
+      "extension": ".json",
+      "size": 86,
+      "path": "jsconfig.json"
     },
     {
       "name": "README.md",
@@ -57,6 +63,36 @@
     }
   ],
   "directories": [
+    {
+      "name": "images",
+      "files": [
+        {
+          "name": "icon-180.png",
+          "extension": ".png",
+          "size": 6705,
+          "path": "images/icon-180.png"
+        },
+        {
+          "name": "icon-192.png",
+          "extension": ".png",
+          "size": 7005,
+          "path": "images/icon-192.png"
+        },
+        {
+          "name": "icon-512-padded.png",
+          "extension": ".png",
+          "size": 14769,
+          "path": "images/icon-512-padded.png"
+        },
+        {
+          "name": "icon-512.png",
+          "extension": ".png",
+          "size": 14520,
+          "path": "images/icon-512.png"
+        }
+      ],
+      "directories": []
+    },
     {
       "name": "messages",
       "files": [
@@ -85,16 +121,58 @@
           "path": "messages/fastfetch.txt"
         },
         {
+          "name": "projects.txt",
+          "extension": ".txt",
+          "size": 1600,
+          "path": "messages/projects.txt"
+        },
+        {
           "name": "whoami.txt",
           "extension": ".txt",
-          "size": 185,
+          "size": 1684,
           "path": "messages/whoami.txt"
         },
         {
           "name": "about.txt",
           "extension": ".txt",
-          "size": 1575,
+          "size": 1788,
           "path": "messages/about.txt"
+        },
+        {
+          "name": "welcome.txt",
+          "extension": ".txt",
+          "size": 1027,
+          "path": "messages/welcome.txt"
+        }
+      ],
+      "directories": []
+    },
+    {
+      "name": "scripts",
+      "files": [
+        {
+          "name": "variables.js",
+          "extension": ".js",
+          "size": 2587,
+          "path": "scripts/variables.js"
+        },
+        {
+          "name": "backend.js",
+          "extension": ".js",
+          "size": 13159,
+          "path": "scripts/backend.js"
+        },
+        {
+          "name": "file_system.js",
+          "extension": ".js",
+          "size": 4443,
+          "path": "scripts/file_system.js"
+        },
+        {
+          "name": "window_utils.js",
+          "extension": ".js",
+          "size": 1005,
+          "path": "scripts/window_utils.js"
         }
       ],
       "directories": []

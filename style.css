@@ -80,6 +80,9 @@ html, body {
     );
     background-size: 24px 24px;
     animation: bg-move 5s linear infinite, bg-color 10s linear infinite alternate;
+    overscroll-behavior: none;
+    position: fixed;
+    touch-action: none;
 }
 
 
