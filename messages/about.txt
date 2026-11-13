@@ -1,28 +1,40 @@
-Hey! I'm @moakdoge, but you can call me moak (/moʊk/).
-I'm gonna try and keep this brief, because you're already spending the time
-to check out my website and I don't want to waste your time (Like i'm already doing..)
+# About
+Call me Moak. (/moʊk/).
 
-I'm primarily a backend dev. I can write front end, this website was written by me,
-but I am horrible at it. Why do you think I did a terminal? I'm bad at web design
-and terminals are easy.
 
-Anyways. I like developing really weird projects legit or vibecoding (don't worry, I don't vibecode often! only if i'm lazy).
-I wrote my own chat site... running on my own HTTP server... which ran on my own parsing li-
+Programming:
+    - I'm a backend developer primarily developing in Python and C++.
+    - I periodically make poorly drawn front-ends (like this website)
+    - I also know enough Luau to write Roblox games.
+    - I've been programming in C++ since 2024 and Python since 2022
+    - I consider myself fluent in Python (prove me wrong, please!)
+    - Been doing JS & Lua(u) on and off since 2020
 
-If you can't tell, I'm the type to hyperoptimize everything. This website took forever
-purely because I wanted to make it feel perfect. I know, I know green text on a black background is
-&&"omz im such a haxxor!!!!"&& but I like it and it describes me to
-less techy people who may visit this.
+Technology:
+    - I'm just a huge tech geek in general; Talk to me about anything techy and I can
+    most likely maintain a conversation with it.
+    - I'm the type of "no black box" technology person. I write everything as low
+    level as I'm able to get it; No frameworks, no libraries, just rawdogging
+    C++ or Python.
+    - I'm a sysadmin. Shocker, considering I set up a domain and run an Oracle
+    Cloud Server.
+    
+Projects:
+    Run |projects|;
 
-I'm fully self-taught and have been programming since I was 10 years old. It's been a long time.
-I'm also the type of person to try to get everything free. This site is an example.
-The domain? Free via GitHub Education
-Hosting? Free through GitHub Pages (see |source| for the code)
-Even my minecraft.moakdoge.dev is free via Oracle Cloud Hosting (private server)
-Point is, I support getting things free IF it's from a big company (FUCK YOU, adobe.)
+About me:
+    - I'm the type of person who when you become friends with, will not leave you.
+    We may stop talking and we may never cross again, but come back to me in 8 months
+    asking for help and I'll help acting like we last talked yesterday.
+    - I love geeking out over my technology. I do a lot of weird projects
+    as an attempt to help learn more.
+    - I'm always trying to learn new skills and love a good competition.
 
-I'm yapping here so I think i'll stop here. Thank you for listening to my ted talk and if you want
-to contact me, for whatever reason, hit me up at |socials|. 
-I'll *maybe* respond, prob not.
-
-See ya!
+P.S:
+    - I generally ignore friend requests on |socials|. You can try to send me a 
+    Discord message request, and if there's a legit reason I'll accept you.
+    - I'm most responsive on Discord, but any of the medias listed in |socials| should
+    work.
+    - A legit reason is almost any reason excluding spam or "hey build this for me". 
+    If you contact me and ask for me to build you something, that's a nogo. Sorry.
+    Find someone else for that one.

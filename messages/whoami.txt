@@ -1,4 +1,27 @@
-Hey! I'm @moakdoge, a %age year old kid who likes to program.
-To learn more about what I code in, run |languages|.
-To contact me, run |socials|.
-For more information on me, run |about|.
+                                        
+                     ███                Hey! I'm &&@moakdoge&&, an %age year old teenager.
+                  ███░ █                I generally program as a backend developer (see |languages|).
+            ████████████████   █        If you see an &&@moakdoge&& online, it's most likely me.
+          ████████████████████          
+         █████           ██████         
+       █████                █████       
+       ████                  ████       To see more information about me, go to |about|.
+      ███                      ███      
+      ███      ██████          ███      
+   ██ ██     █ ██████ █         ██      
+   █  ███    █ ██████ █        ███      
+   ▓  ███      ██████          ███ ▒▒   
+    █  ███                    ███   ▓   
+    ▓█ ████                  ████  ▓▒   
+        █████              █████        
+        █████████      ████████         
+        █████████████████████           
+              ████████████              
+            ██  █                       
+                     ░                  
+                                                                                                
+                                                                   
+
+
+
+

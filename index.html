@@ -7,7 +7,7 @@
 <body id="main-body">
     <div class="window" id="window">
         <div class="title-bar">
-            <p>Example Title</p>
+            <p>Terminal</p>
             <button class="close-button">X</button>
         </div>
         
@@ -157,6 +157,7 @@
 
                 await registerStupidCommand("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
                 await registerStupidCommand("about", "$message about", false, "About me.", "moakdoge");
+                await registerStupidCommand("projects", "$message projects", false, "Gets my projects", "moakdoge");
 
                 /* Secret commands. You found them.*/
                 await registerStupidCommand("sudo", "... You're root.");
@@ -226,17 +227,15 @@
                     await printToLog("<pre>" + fixed + "</pre>");
                 })
 
+                await registerStupidCommand("welcome", "$message welcome", false, "The welcome command.", "moakdoge");
+
                 /* debug commands i may or may not remove */
                 await registerStupidCommand("formatting-test", "$message formatting-test");
 
                 /* You guys are laughing at me. For sure. I don't care if it works it works*/
-                await runCommand(await processCommandInput("whoami"));
-                await runCommand(await processCommandInput("echo '---------------------'"));
-                await runCommand(await processCommandInput("help"));
-                await runCommand(await processCommandInput("\n"));
-                commandHistory = [];
+                await runCommand(["welcome"]);
 
-                await alertUser("test alert", "hello, world!");
+                
             })();
         </script>
     </div>

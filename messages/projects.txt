@@ -1,0 +1,29 @@
+# My Projects
+
+A lot of my projects are admittedly unpolished. I mostly do them for fun,
+not expecting anyone to actually use them. If you came here from one of my projects,
+cool!
+
+Anyways, here's my favorite ones:
+    - moakdoge/moaksite (this webite): see |source|
+    - [moakdoge/printdb2](https://github.com/moakdoge/printdb2):
+        * My attempt at making my own terminal in Python with Python commands.
+    - [moakdoge/7870A-code-repository](https://github.com/moakdoge/7870A-code-repository):
+        * This was for my VEXV5 Robot; I love it even if it was my first C++ program
+        * because it was one of my longest projects I've ever made and has some very
+        * smart design choices.
+    - [moakdoge/pyu](https://github.com/moakdoge/pyu):
+        * It's basically my own package manager server; Used for Python,
+        * it supports versioning and dependancies. And it's mine, so it's cool.
+    - [moakdoge/pyu-client](https://github.com/moakdoge/pyu-client):
+        * The CLI for the client above.
+        * Fun fact - this project directly inspired the one below this, ArgPlusPlus!
+    - [moakdoge/argplus-remake](https://github.com/moakdoge/argplus_remake):
+        * This is a library designed to go against Click or Typer by being super fast
+        * and very light.
+        * Its README is also the most lackluster thing ever because this was scrapped,
+        * but I figured I'd publish it in this list anyways.
+        * It only relies on standard libraries and mocks a part of Rich and most of Typer.
+
+
+Check some of these out!
