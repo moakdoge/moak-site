@@ -214,16 +214,13 @@ async function _resizeLog() {
 
     if (window.customHeight) {
         height = window.customHeight;
-        console.log(customHeight);
+        console.log(window.customHeight);
     }
 
-    let pxHeight = height*0.9;
+    let pxHeight = height * 0.95;
     windowElement.style.height =`${Math.floor(pxHeight)}px`;
-    if (height != window.innerHeight) {
-        windowElement.style.top = `${Math.floor(pxHeight)}px`;
-    }else{
-        windowElement.style.top = `50%`;
-    }
+    const viewportOffset = window.visualViewport?.offsetTop ?? 0;
+    windowElement.style.top = `${Math.floor(viewportOffset + height / 2)}px`;
 
 }
 
@@ -483,13 +480,18 @@ const win = registerWindow(windowElement, found, foundB, () => {
     return false;
 });
 
+if (mobileUser && window.visualViewport) {
+    window.visualViewport.addEventListener("resize", _resizeLog);
+    window.visualViewport.addEventListener("scroll", _resizeLog);
+}
 
 
 (async function (){
     if (mobileUser) {
-        windowElement.style.width = "90%";
-        windowElement.style.height = "90%";
+        windowElement.style.width = "100%";
+        windowElement.style.height = "95%";
         document.documentElement.style.setProperty('--mobile-visible', 'none');
+        await _resizeLog();
         console.log("mobile");
     }
 })();

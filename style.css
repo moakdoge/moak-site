@@ -93,6 +93,7 @@ html, body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    box-sizing: border-box;
     width: 80%;
     height: 80%;
     border-color: var(--text-color);
