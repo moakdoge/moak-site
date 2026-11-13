@@ -467,6 +467,9 @@ document.addEventListener('click', async (e) => {
         commandInput.value = String(command).trim();
         await _resizeLog();
         await resizeCommandInput();
+        if (mobileUser) {
+            await scrollToBottom();
+        }
         await submitPrompt();
     }
 })

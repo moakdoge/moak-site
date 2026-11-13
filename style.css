@@ -94,6 +94,7 @@ html, body {
     top: 50%;
     transform: translate(-50%, -50%);
     box-sizing: border-box;
+    max-height: calc(100dvh - 16px);
     width: 80%;
     height: 80%;
     border-color: var(--text-color);
@@ -103,11 +104,13 @@ html, body {
     border-style: solid;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     padding:8px;
 }
 
 .title-bar {
     height:40px;
+    flex: 0 0 40px;
     background-color: var(--background-color);
     display: flex;
     flex-direction: row;
@@ -168,10 +171,12 @@ body::after {
 
 .term-log {
     display: flex;
+    flex: 1 1 0;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    height: 100%;
+    height: auto;
+    min-height: 0;
     max-height: 100vh;
     box-sizing: border-box;
     align-items: flex-start;
