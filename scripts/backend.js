@@ -75,7 +75,10 @@ async function registerStupidCommand(name, error, hidden = true, description = "
     new MainCommand(name, description, author, callback, hidden);
 }
 async function getPrompt() {
-    return username + "@" + hostname + " " + await fileManager.getDirectory() + "> ";
+    let prompt = `${username}@${hostname}`
+    let path = await fileManager.getDirectory();
+    let final =`${prompt} (${path}) ❯ `
+    return final;
 }
 
 async function clearLog() {
@@ -159,7 +162,12 @@ async function initPrompt() {
     inputPromptText.textContent = await getPrompt();
     commandInput.value = "";
     if (cursor != 0 && cursor <= commandHistory.length) {
-        commandInput.value = commandHistory[commandHistory.length - cursor];
+        let val = commandHistory[commandHistory.length - cursor];
+        if (val == undefined) {
+            cursor = commandHistory.length - 1;
+            val = "";
+        }
+        commandInput.value = val
     } else {
         cursor = 0;
     }
@@ -215,12 +223,15 @@ async function findCommand(name) {
 }
 /** 
   *  @param {string[]} args
+  *  @param {bool} addToHistory = true
   *  @return {bool} success (true if succeeded; otherwise false)
 */
-async function runCommand(args) {
+async function runCommand(args, addToHistory = true) {
     let commandName = args[0];
     let found = await findCommand(commandName);
-    commandHistory.push(args.join(" "));
+    if (addToHistory) {
+        commandHistory.push(args.join(" "));
+    }
     if (found) {
         await found.callback(args);
         cursor = 0;

@@ -101,6 +101,7 @@
 
                 await registerCommand("clear", "Clears the terminal", "moakdoge", async function () {
                     await clearLog();
+                    await runCommand(["welcome"], false);
                 });
 
 
@@ -228,7 +229,7 @@
                 await registerStupidCommand("formatting-test", "$message formatting-test");
 
                 /* You guys are laughing at me. For sure. I don't care if it works it works*/
-                await runCommand(["welcome"]);
+                await runCommand(["welcome"], false);
 
                 
             })();
