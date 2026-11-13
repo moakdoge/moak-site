@@ -203,8 +203,34 @@ async function scrollToBottom() {
     });
 }
 
+async function _resizeLog() {
+    console.log("resize, mobile user:", mobileUser);
+    if (!mobileUser) {
+        return;
+    }
+    let height = window.visualViewport
+    ? window.visualViewport.height
+    : window.innerHeight; 
+
+    if (window.customHeight) {
+        height = window.customHeight;
+        console.log(customHeight);
+    }
+
+    let pxHeight = height*0.9;
+    windowElement.style.height =`${Math.floor(pxHeight)}px`;
+    if (height != window.innerHeight) {
+        windowElement.style.top = `${Math.floor(pxHeight)}px`;
+    }else{
+        windowElement.style.top = `50%`;
+    }
+
+}
+
 async function resizeCommandInput() {
+
     commandInput.style.width = Math.max(commandInput.value.length, 1) + "ch";
+    await _resizeLog();
     await scrollToBottom();
 }
 /**
@@ -272,6 +298,7 @@ async function raiseError(command, message) {
 }
 async function submitPrompt() {
     //For now, this'll just handle the equivalent of an enter
+    await _resizeLog();
     let command = commandInput.value.trim();
     let combined = `&&${await getPrompt() + command}&&`;
     await printToLog(combined);
@@ -441,6 +468,7 @@ document.addEventListener('click', async (e) => {
         e.preventDefault();
         const command = cmdElement.dataset.command || cmdElement.textContent;
         commandInput.value = String(command).trim();
+        await _resizeLog();
         await resizeCommandInput();
         await submitPrompt();
     }
