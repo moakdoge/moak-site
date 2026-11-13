@@ -21,13 +21,11 @@
                     autocapitalize="off" autocomplete="off">
             </div>
         </div>
-        <script src="file_system.js"></script>
-        <script src="backend.js"></script>
-        <script src="variables.js"></script>
+        <script src="scripts/file_system.js"></script>
+        <script src="scripts/backend.js"></script>
+        <script src="scripts/variables.js"></script>
+        <script src="scripts/window_utils.js"></script>
         <script>
-            /// <refrence path="./file_system.js" />
-
-
 
             (async function () {
                 await registerCommand("help", "Helps you.", "moakdoge", async function (args) {
@@ -237,6 +235,8 @@
                 await runCommand(await processCommandInput("help"));
                 await runCommand(await processCommandInput("\n"));
                 commandHistory = [];
+
+                await alertUser("test alert", "hello, world!");
             })();
         </script>
     </div>

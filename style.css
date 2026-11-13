@@ -2,7 +2,7 @@
     --background-color: #000000;
     --text-color: #00ff22;
     --output-color: #ffffff;
-    --window-color: #33313191;
+    --window-color: #14141479;
     --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
     --font-size: 1vw;
     font-size: 1rem;
@@ -43,6 +43,20 @@ html::-webkit-scrollbar {
     }
 }
 
+.text {
+    font-family: inherit;
+    color: var(--text-color);
+}
+
+.window.focused {
+    backdrop-filter: blur(8px);    
+}
+
+.window.unfocused {
+    border: var(--background-color);
+}
+
+
 html, body {
     width: 120%;
     height: 120%;
@@ -73,13 +87,14 @@ html, body {
     transform: translate(-50%, -50%);
     width: 80%;
     height: 80%;
-    background-color: var(--window-color);
     border-color: var(--text-color);
     border-radius: 2px;
+    background-color: var(--window-color);
     border: var(--text-color);
     border-style: solid;
     display: flex;
     flex-direction: column;
+    padding:8px;
 }
 
 .title-bar {

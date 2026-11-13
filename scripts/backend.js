@@ -22,6 +22,7 @@ let cursor = 0;
 let username = "root";
 let hostname = "moakdoge.dev";
 
+let windowElements = [];
 
 /** @type {string: string} */
 let cached_messages = {}
@@ -252,7 +253,7 @@ async function submitPrompt() {
 
 initPrompt();
 
-async function createWindow(w, h, title) {
+async function createWindow(w, h, title, closeCallback) {
     const newElement = document.createElement("div");
     newElement.className = "window";
     newElement.style.zIndex = 999;
@@ -274,16 +275,17 @@ async function createWindow(w, h, title) {
     titleBar.appendChild(closeButton);
 
 
-    registerWindow(newElement, titleBar, closeButton);
+    registerWindow(newElement, titleBar, closeButton, closeCallback);
     return newElement;
 }
 
 
 
 
-function registerWindow(windowElement, titleBar, closeButton) {
+function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
     let dragOffset = null;
 
+    windowElements.push(windowElement);
     titleBar.addEventListener("pointerdown", (e) => {
         const bounds = windowElement.getBoundingClientRect();
         dragOffset = {
@@ -293,7 +295,26 @@ function registerWindow(windowElement, titleBar, closeButton) {
         titleBar.setPointerCapture(e.pointerId);
         titleBar.style.cursor = "grabbing";
     });
+    
+    function focusWindow() {
+        windowElement.style.zIndex = 1;
+        windowElement.classList.add("focused");
+        windowElement.classList.remove("unfocused")
+        for (const otherWindow of windowElements) {
+            if (otherWindow === windowElement) {
+                continue;
+            }
+            otherWindow.classList.remove("focused");
+            otherWindow.classList.add("unfocused");
+            otherWindow.style.zIndex = 0;
+        }
+    }
+    windowElement.addEventListener("pointerdown", (e) => {
+        focusWindow()
+    })
 
+
+    focusWindow();
 
     closeButton.addEventListener("pointerdown", (e) => {
         e.stopPropagation();
@@ -302,6 +323,21 @@ function registerWindow(windowElement, titleBar, closeButton) {
     closeButton.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (closeCallback != undefined && closeCallback != null) {
+            let doClose = true;
+            try {
+                doClose = closeCallback();
+            } catch {
+                doClose = false;
+            }
+            if (!doClose) {
+                return;
+            }
+        }
+            const windowIndex = windowElements.indexOf(windowElement);
+            if (windowIndex !== -1) {
+                windowElements.splice(windowIndex, 1);
+            }
         windowElement.remove();
     });
 
@@ -369,4 +405,7 @@ document.addEventListener('click', async (e) => {
 const windowElement = document.getElementById("window");
 const found = document.querySelector(".title-bar");
 const foundB = document.querySelector(".close-button");
-registerWindow(windowElement, found, foundB);
+registerWindow(windowElement, found, foundB, () => {
+    alertUser("System", "Why would you try to close this? ")
+    return false;
+});
