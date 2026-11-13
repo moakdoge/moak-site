@@ -5,6 +5,8 @@ const commandInput = document.getElementById("command-input");
 const mainBody = document.getElementById("main-body");
 const birthday = new Date("2010-03-17T15:00:04.000Z");
 const startupTime = new Date();
+const mobileUser = window.innerWidth < 640;
+
 
 async function getStartupTime() {
     return startupTime;
@@ -425,7 +427,18 @@ document.addEventListener('click', async (e) => {
 const windowElement = document.getElementById("window");
 const found = document.querySelector(".title-bar");
 const foundB = document.querySelector(".close-button");
-registerWindow(windowElement, found, foundB, () => {
+const win = registerWindow(windowElement, found, foundB, () => {
     alertUser("System", "Why would you try to close this? ")
     return false;
 });
+
+
+
+(async function (){
+    if (mobileUser) {
+        windowElement.style.width = "90%";
+        windowElement.style.height = "95%";
+        document.documentElement.style.setProperty('font-size', '1rem');
+        console.log("mobile");
+    }
+})();

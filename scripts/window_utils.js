@@ -8,7 +8,13 @@ async function alertUser(title, message, blocking = false) {
         };
     });
 
-    let win = await createWindow(20, 20, title, onFinish);
+    let w = 20;
+    let h = 20;
+    if (mobileUser) {
+        w = 70;
+        h = 20;
+    }
+    let win = await createWindow(w, h, title, onFinish);
     
     let msg = document.createElement("p");
     win.appendChild(msg);
