@@ -29,7 +29,10 @@
         <script src="scripts/variables.js"></script>
         <script src="scripts/window_utils.js"></script>
         <script>
-
+            //PWA patch
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js');
+            }
             (async function () {
                 await registerCommand("help", "Helps you.", "moakdoge", async function (args) {
                     for (let command in commands) {
