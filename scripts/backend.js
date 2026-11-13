@@ -300,13 +300,15 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
 
     windowElements.push(windowElement);
     titleBar.addEventListener("pointerdown", (e) => {
-        const bounds = windowElement.getBoundingClientRect();
-        dragOffset = {
-            x: e.clientX - bounds.left,
-            y: e.clientY - bounds.top
-        };
-        titleBar.setPointerCapture(e.pointerId);
-        titleBar.style.cursor = "grabbing";
+        if (!mobileUser) {
+            const bounds = windowElement.getBoundingClientRect();
+            dragOffset = {
+                x: e.clientX - bounds.left,
+                y: e.clientY - bounds.top
+            };
+            titleBar.setPointerCapture(e.pointerId);
+            titleBar.style.cursor = "grabbing";
+        }
     });
     
     function focusWindow() {
@@ -437,7 +439,7 @@ const win = registerWindow(windowElement, found, foundB, () => {
 (async function (){
     if (mobileUser) {
         windowElement.style.width = "90%";
-        windowElement.style.height = "95%";
+        windowElement.style.height = "90%";
         document.documentElement.style.setProperty('font-size', '1rem');
         console.log("mobile");
     }

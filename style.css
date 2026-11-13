@@ -67,6 +67,7 @@ html, body {
     position: absolute;
     font-family: var(--font);
     overflow-x: hidden;
+    overflow: hidden;
     -ms-overflow-style: none;
     scrollbar-width: none;
     min-height: 100vh;
@@ -231,12 +232,12 @@ body::after {
 
 .info-section {
     position: absolute;
-    width: 20%;
-    height: 20%;
+    min-width: 40px;
+    height: auto;
     overflow: hidden;
 
-    left: 80%;
-    top: 80%;
+    right: 10px;
+    bottom: 10px;
     display: flex;
     background-color: #e9ecea00;
     align-items: flex-end;
@@ -247,4 +248,5 @@ body::after {
 .info-section p {
     color: #fdfdfd27;
     margin: 5px;
+    z-index: 999;
 }
