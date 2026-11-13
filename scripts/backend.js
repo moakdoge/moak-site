@@ -114,6 +114,21 @@ async function aliasCommand(new_inp, old) {
 
 /** @param {string} content */
 async function formatContent(content) {
+    const asciiArtBlocks = [];
+    const asciiArtToken = (index) => `@@ASCII_ART_BLOCK_${index}@@`;
+    const escapeHtml = (value) => value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+
+    content = content.replace(/;\{([\s\S]*?)\}/g, (match, block) => {
+        const index = asciiArtBlocks.length;
+        asciiArtBlocks.push(block);
+        return asciiArtToken(index);
+    });
+
     const disableFormattingMarker = "--disable-text-formatting--";
     const disableFormatting = content.includes(disableFormattingMarker);
 
@@ -142,6 +157,12 @@ async function formatContent(content) {
         let callback = string_variables[name];
         let replacement = String(await callback());
         content = content.replaceAll(`%${name}`, replacement);
+    }
+
+    for (let index = 0; index < asciiArtBlocks.length; index++) {
+        const token = asciiArtToken(index);
+        const block = `<span class="ascii-art">${escapeHtml(asciiArtBlocks[index])}</span>`;
+        content = content.replaceAll(token, () => block);
     }
 
     return content;
@@ -440,7 +461,7 @@ const win = registerWindow(windowElement, found, foundB, () => {
     if (mobileUser) {
         windowElement.style.width = "90%";
         windowElement.style.height = "90%";
-        document.documentElement.style.setProperty('font-size', '1rem');
+        document.documentElement.style.setProperty('--mobile-visible', 'none');
         console.log("mobile");
     }
 })();

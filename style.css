@@ -5,6 +5,7 @@
     --window-color: #14141479;
     --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
     --font-size: 1vw;
+    --mobile-visible: inline; 
     font-size: 1rem;
 }
 
@@ -174,19 +175,24 @@ body::after {
     box-sizing: border-box;
     align-items: flex-start;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow-x: scroll;   
     overflow-y: auto;
     padding: 8px;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
+.term-log::-webkit-scrollbar {
+    display: none;
+}
+
 .log {
     width: 100%;
-    max-width: 100%;
+    max-width: fit-content;
     min-width: 0;
     height: fit-content;
-    overflow-wrap: anywhere;
+    overflow-wrap: none;
+    overflow-x: visible;
 }
 
 .content,
@@ -195,8 +201,24 @@ body::after {
     overflow-wrap: anywhere;
     white-space: pre-wrap;
 }
+
+.content pre {
+    display: block;
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+    overflow-wrap: normal;
+    white-space: pre;
+}
 .content {
     color: var(--output-color);
+}
+
+.ascii-art {
+    white-space: pre;
+    overflow-wrap: normal;
+    font-family: inherit;
+    display: var(--mobile-visible);
 }
 
 .colored-text {
@@ -252,4 +274,5 @@ body::after {
     color: #fdfdfd27;
     margin: 5px;
     z-index: 999;
+    display: var(--mobile-visible);
 }

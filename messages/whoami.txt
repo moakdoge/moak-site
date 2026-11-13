@@ -1,24 +1,24 @@
                                         
-                     ███                Hey! I'm &&@moakdoge&&, an %age year old teenager.
-                  ███░ █                I generally program as a backend developer (see |projects|).
-            ████████████████   █        If you see an &&@moakdoge&& online, it's most likely me.
-          ████████████████████          
-         █████           ██████         
-       █████                █████       
-       ████                  ████       To see more information about me, go to |about|.
-      ███                      ███      
-      ███      ██████          ███      
-   ██ ██     █ ██████ █         ██      
-   █  ███    █ ██████ █        ███      
-   ▓  ███      ██████          ███ ▒▒   
-    █  ███                    ███   ▓   
-    ▓█ ████                  ████  ▓▒   
-        █████              █████        
-        █████████      ████████         
-        █████████████████████           
-              ████████████              
-            ██  █                       
-                     ░                  
+;{                     ███                }Hey! I'm &&@moakdoge&&, an %age year old teenager.\n
+;{                  ███░ █                }I generally program as a backend developer (see |projects|).
+;{            ████████████████   █        }If you see an &&@moakdoge&& online, it's most likely me.
+;{          ████████████████████          }
+;{         █████           ██████         }
+;{       █████                █████       }
+;{       ████                  ████       }To see more information about me, go to |about|.
+;{      ███                      ███      }
+;{      ███      ██████          ███      }
+;{   ██ ██     █ ██████ █         ██      }
+;{   █  ███    █ ██████ █        ███      }
+;{   ▓  ███      ██████          ███ ▒▒   }
+;{    █  ███                    ███   ▓   }
+;{    ▓█ ████                  ████  ▓▒   }
+;{        █████              █████        }
+;{        █████████      ████████         }
+;{        █████████████████████           }
+;{              ████████████              }
+;{            ██  █                       }
+;{                     ░                  }
                                                                                                 
                                                                    
 
