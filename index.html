@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="style.css">
 <html>
-<title>moakdoge.dev</title>
+<title>moakdoge</title>
 <meta name="viewport" content="width-device-width, initial-scale=1.0">
 
 <body id="main-body">
@@ -73,7 +73,7 @@
                         await printToLog("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year));
                     }
 
-                })
+                }, true);
 
                 await registerCommand("socials", "My social medias", "moakdoge", async function (args) {
 
@@ -146,11 +146,6 @@
                     await raiseError(args[0], "Filesystem is read-only.");
                 };
 
-                await registerCommand("open-window", "Tests opening a window", "moakdoge", async function (args) {
-                    await createWindow(50, 33, "Test Window");
-                }, false)
-
-
 
 
 
@@ -200,7 +195,7 @@
                 await aliasCommand("yay", "pacman");
                 await aliasCommand("apt-get", "apt");
 
-                await registerStupidCommand("ai-use", `$message ai-use`, false, "How AI was used on this site.", "moakdoge");
+                await registerStupidCommand("ai-use", `$message ai-use`, true, "How AI was used on this site.", "moakdoge");
 
                 await registerCommand("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", async function (args) {
                     let newHostName = args[1];

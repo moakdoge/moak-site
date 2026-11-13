@@ -309,6 +309,8 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
             otherWindow.style.zIndex = 0;
         }
     }
+
+    windowElement._focus = focusWindow;
     windowElement.addEventListener("pointerdown", (e) => {
         focusWindow()
     })
@@ -338,7 +340,11 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
             if (windowIndex !== -1) {
                 windowElements.splice(windowIndex, 1);
             }
+
         windowElement.remove();
+        if (windowElements.length > 0) {
+            windowElements[0]._focus();
+        }
     });
 
     titleBar.addEventListener("pointermove", (e) => {
@@ -385,8 +391,11 @@ inputPrompt.addEventListener('keydown', async (e) => {
     }
 });
 
-mainBody.addEventListener("click", (e) => {
-    commandInput.focus();
+terminalLog.addEventListener("click", (e) => {
+    if (document.activeElement != commandInput) {
+        commandInput.focus({ preventScroll: true });
+    }
+    
 })
 
 
