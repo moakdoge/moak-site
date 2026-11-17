@@ -153,7 +153,7 @@ class FileManager {
 
 
 /** @type {FileManager} */
-let fileManager = null;
+export let fileManager = null;
 (async function (){
     fileManager = new FileManager();
     await fileManager.init();

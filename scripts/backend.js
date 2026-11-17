@@ -1,15 +1,16 @@
+import * as strutils from './strings.js';
+import {fileManager} from "./file_system.js";
 const terminalLog = document.getElementById("term-log");
 const inputPrompt = document.getElementById("input-prompt");
 const inputPromptText = document.getElementById("prompt-text");
 const commandInput = document.getElementById("command-input");
 const mainBody = document.getElementById("main-body");
-const birthday = new Date("2010-03-17T15:00:04.000Z");
+export const mobileUser = window.innerWidth < 640;
 const startupTime = new Date();
-const mobileUser = window.innerWidth < 640;
 let attemptsToOpen = 0;
 
 
-async function getStartupTime() {
+export async function getStartupTime() {
     return startupTime;
 }
 
@@ -23,8 +24,8 @@ let commands = [];
 /** @type {string[]} */
 let commandHistory = [];
 let cursor = 0;
-let username = "root";
-let hostname = "moakdoge.dev";
+export let username = "root";
+export let hostname = "moakdoge.dev";
 
 let windowElements = [];
 
@@ -52,26 +53,17 @@ class MainCommand {
     }
 }
 
-async function registerCommand(name, description, author, callback, hidden = false) {
+export async function registerCommand(name, description, author, callback, hidden = false) {
     new MainCommand(name, description, author, callback, hidden);
 }
 
-/** @param {string | callback} callback */
-async function registerStringVariable(name, callback) {
-    if (typeof (callback) == String) {
-        async function _() {
-            return callback;
-        }
-        callback = _;
-    }
-    string_variables[name] = callback
-}
-async function registerStupidCommand(name, error, hidden = true, description = "We don't know...", author = "N/A") {
+
+export async function registerStupidCommand(name, error, hidden = true, description = "We don't know...", author = "N/A") {
     if (error.startsWith("$message")) {
         error = String(error).replace("$message", "");
         error = error.trim();
 
-        error = await loadMessage(error);
+        error = await strutils.loadMessage(error);
     }
     async function callback() {
         await printToLog(error);
@@ -95,97 +87,16 @@ async function clearLog() {
 }
 
 
-async function loadMessage(message_id) {
-    if (cached_messages[message_id] != undefined) {
-        return cached_messages[message_id];
-    }
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `/messages/${message_id}.txt`, false); // false = synchronous
-    xhr.send(null);
-    let ans = xhr.response;
-    cached_messages[message_id] = ans;
-    return ans;
-}
 
-async function aliasCommand(new_inp, old) {
+export async function aliasCommand(new_inp, old) {
     let found = await findCommand(old);
     if (found) {
         found.aliases.push(new_inp);
     }
 }
 
-/** @param {string} content */
-/** @param {string} content */
-async function formatContent(content) {
-    const asciiArtBlocks = [];
-    const asciiArtToken = (index) => `@@ASCII_ART_BLOCK_${index}@@`;
-    const escapeHtml = (value) => value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-
-    if (mobileUser) {
-        content = content
-            // 1. Remove standalone ;{...} blocks (matching up to the first closing brace)
-            .replace(/(?:^|\r?\n|\\n)[ \t]*;\{[^}]*\}[ \t]*(?=\r?\n|\\n|$)/g, "")
-            // 2. Remove any remaining inline ;{...} blocks
-            .replace(/;\{[^}]*\}/g, "")
-            // 3. Clean up leading newlines if the removed block was at the start
-            .replace(/^(?:\r?\n|\\n)+/, "");
-    } else {
-        content = content.replace(/;\{([\s\S]*?)\}/g, (match, block) => {
-            const index = asciiArtBlocks.length;
-            asciiArtBlocks.push(block);
-            return asciiArtToken(index);
-        });
-    }
-
-    const disableFormattingMarker = "--disable-text-formatting--";
-    const disableFormatting = content.includes(disableFormattingMarker);
-
-    if (!disableFormatting) {
-        content = content
-            .replace(/(^|\r?\n)### (.+?)(?=\r?\n|$)/gm, "$1<h3>$2</h3>")
-            .replace(/(^|\r?\n)## (.+?)(?=\r?\n|$)/gm, "$1<h2>$2</h2>")
-            .replace(/(^|\r?\n)# (.+?)(?=\r?\n|$)/gm, "$1<h1>$2</h1>")
-            .replace(/(^|\r?\n)-# (.+?)(?=\r?\n|$)/gm, "$1<small>$2</small>")
-            .replace(/__(.+?)__/g, '<u>$1</u>')
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/~~(.+?)~~/g, '<del>$1</del>')
-            .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>')
-            .replace(/\|([^|]+)\|/g, '<a href="#" class="command-text command-link" data-command="$1">$1</a>')
-            .replace(/&&([^&]+)&&/g, '<span class="colored-text">$1</span>')
-            .replace(/`([^`]+)`/g, '<span class="command-text">$1</span>')
-            .replace(
-                /\[([^\]]+)\]\(([^)\s]+)\)/g,
-                '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-            )
-            .replace(/\\n|\r?\n/g, "<br>");
-    } else {
-        content = content.replace(disableFormattingMarker, "");
-    }
-
-    for (let name in string_variables) {
-        let callback = string_variables[name];
-        let replacement = String(await callback());
-        content = content.replaceAll(`%${name}`, replacement);
-    }
-
-    for (let index = 0; index < asciiArtBlocks.length; index++) {
-        const token = asciiArtToken(index);
-        const block = `<span class="ascii-art">${escapeHtml(asciiArtBlocks[index])}</span>`;
-        content = content.replaceAll(token, () => block);
-    }
-
-    if (mobileUser) {
-        content = content.replace(/(?:<br\s*\/?>|\r?\n|\\n|\s)+$/gi, "");
-    }
-    return content;
-}
-async function printToLog(content, raw = false) {
-    let fixed_content = raw ? String(content) : await formatContent(content)
+export async function printToLog(content, raw = false) {
+    let fixed_content = raw ? String(content) : await strutils.formatString(content)
     let mainDiv = document.createElement("div");
     mainDiv.className = "log";
     let contentItem = document.createElement("span");
@@ -294,7 +205,7 @@ async function findCommand(name) {
   *  @param {bool} addToHistory = true
   *  @return {bool} success (true if succeeded; otherwise false)
 */
-async function runCommand(args, addToHistory = true) {
+export async function runCommand(args, addToHistory = true) {
     let commandName = args[0];
     let found = await findCommand(commandName);
     if (addToHistory) {
@@ -507,11 +418,7 @@ const foundB = document.querySelector(".close-button");
 const win = registerWindow(windowElement, found, foundB, () => {
     attemptsToOpen += 1;
     if (attemptsToOpen >= 3) {
-        formatContent("Go check out scatty at [scatty.ing](https://scatty.ing). Also, please stop trying to close this.").then(
-            function (out) {
-                alertUser("moakdoge", out);
-            }
-        );
+        alertUser("moakdoge", formatString("Go check out scatty at [scatty.ing](https://scatty.ing). Also, please stop trying to close this."));
         attemptsToOpen = 0;
         return false;
     }

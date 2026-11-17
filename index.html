@@ -90,12 +90,16 @@
                     autocapitalize="off" autocomplete="off">
             </div>
         </div>
-        <script src="scripts/file_system.js"></script>
-        <script src="scripts/backend.js"></script>
-        <script src="scripts/variables.js"></script>
-        <script src="scripts/window_utils.js"></script>
-        <script src="scripts/easteregg.js"></script>
-        <script>
+        <script src="scripts/strings.js" type="module"></script>
+        <script src="scripts/file_system.js" type="module"></script>
+        <script src="scripts/backend.js" type="module"></script>
+        <script src="scripts/variables.js" type="module"></script>
+        <script src="scripts/window_utils.js" type="module"></script>
+        <script src="scripts/easteregg.js" type="module"></script>
+        <script type="module">
+            import {fileManager} from "./scripts/file_system.js";
+            import {registerCommand, registerStupidCommand, aliasCommand, hostname, username, runCommand, printToLog} from "./scripts/backend.js";
+            import {loadMessage} from "./scripts/strings.js";
             console.log("Psst... run m0akd0g3");
             //PWA patch
             if ('serviceWorker' in navigator) {
