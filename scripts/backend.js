@@ -123,6 +123,10 @@ async function formatContent(content) {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
 
+    if (mobileUser) {
+        content = content.replace(/(^|\r?\n)[ \t]*;\{[^}]*\}[ \t]*(?:\r?\n|$)/g, "$1");
+    }
+
     content = content.replace(/;\{([\s\S]*?)\}/g, (match, block) => {
         if (mobileUser) {
             return "";
