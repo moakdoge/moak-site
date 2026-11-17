@@ -124,6 +124,9 @@ async function formatContent(content) {
         .replaceAll("'", "&#39;");
 
     content = content.replace(/;\{([\s\S]*?)\}/g, (match, block) => {
+        if (mobileUser) {
+            return "";
+        }
         const index = asciiArtBlocks.length;
         asciiArtBlocks.push(block);
         return asciiArtToken(index);
