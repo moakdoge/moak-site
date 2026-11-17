@@ -170,14 +170,18 @@ async function formatContent(content) {
 
     return content;
 }
-async function printToLog(content) {
-    let fixed_content = await formatContent(content)
+async function printToLog(content, raw = false) {
+    let fixed_content = raw ? String(content) : await formatContent(content)
     let mainDiv = document.createElement("div");
     mainDiv.className = "log";
     let contentItem = document.createElement("span");
     contentItem.className = "content";
-    contentItem.innerHTML = fixed_content
-
+    if (raw) {
+        contentItem.textContent = fixed_content;
+        contentItem.style.whiteSpace = "pre-wrap";
+    } else {
+        contentItem.innerHTML = fixed_content;
+    }
 
     mainDiv.appendChild(contentItem);
     terminalLog.insertBefore(mainDiv, inputPrompt);
