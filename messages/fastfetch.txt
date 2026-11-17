@@ -2,20 +2,20 @@
 ;{            @@@@@@@@@-                   }------------------------------------------------
 ;{    .:%.    @@@@@@@@@+.       @%         }OS: moakdoge.os x86_64
 ;{   *@@@%+:  :@@@@@@@%=: .=%@@@@@@=       }Host: %useragent
-;{  :@@@@@@##@@@@@@@@@%*+%@%+@@@@@@@+      }Kernel: How the hell am I supposed to know?
+;{  :@@@@@@##@@@@@@@@@%*+%@%+@@@@@@@+      }Kernel: xMoak 3.17.1-public
 ;{  @@#####+@@@@@@@%:######=@@@@@@@@@-     }Uptime: %uptime-day days, %uptime-hour hours, %uptime-minute minutes, %uptime-second seconds.
 ;{ *@%######.@@@@@##########-@@@@@@@@#.    }Packages: 0 (doge)
 ;{  %@-#.@=:##+@@@@-###%@:=###*@#*+=-+#:   }Shell: doge 1.6
 ;{ @@.#@@*=:#-%%**-##%@@%**####=-          }Display: %widthx%height 
-;{ @@-#@@@@+.-...:=.#%@@@@%####-           }DE: you don't have one.
-;{ %@%##*#:.o.....o...-%@+####@+    -:     }WM: you don't have one.
-;{ +@@*#....................+@@@@@@@@+     }WM Theme: you don't have one.
-;{  @%:....................._:@@@@@@@=.    }Theme: you don't have one.
-;{  .=:...............__*-=.=@@@@@@#=.     }Icons: you don't have one.
-;{   :+:....:==*__*-=`:..==-:#@@@@@%+:     }Font: hopefully JetBrains Mono
-;{     .--=-:  +..::.....-:    =%@*=:      }Cursor: I can't figure this out...
-;{              :........-                 }Terminal: this website.
-;{                .:...--.                 }Terminal Font: hopefully JetBrains Mono
+;{ @@-#@@@@+.-...:=.#%@@@@%####-           }WM: Doge Haxxor 6
+;{ %@%##*#:.o.....o...-%@+####@+    -:     }Theme: Haxxor
+;{ +@@*#....................+@@@@@@@@+     }Font: hopefully JetBrains Mono
+;{  @%:....................._:@@@@@@@=.    }Terminal: this website.
+;{  .=:...............__*-=.=@@@@@@#=.     }
+;{   :+:....:==*__*-=`:..==-:#@@@@@%+:     }
+;{     .--=-:  +..::.....-:    =%@*=:      }
+;{              :........-                 }
+;{                .:...--.                 }
 
 
                                                                  

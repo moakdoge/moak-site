@@ -8,7 +8,7 @@ async function alertUser(title, message, blocking = false) {
         };
     });
 
-    let w = 20;
+    let w = 40;
     let h = 20;
     if (mobileUser) {
         w = 70;
@@ -19,7 +19,7 @@ async function alertUser(title, message, blocking = false) {
     let msg = document.createElement("p");
     win.appendChild(msg);
     msg.classList.add("text");
-    msg.innerText = message;
+    msg.innerHTML = message;
 
     if (!blocking) {
         return true;

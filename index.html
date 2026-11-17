@@ -94,7 +94,9 @@
         <script src="scripts/backend.js"></script>
         <script src="scripts/variables.js"></script>
         <script src="scripts/window_utils.js"></script>
+        <script src="scripts/easteregg.js"></script>
         <script>
+            console.log("Psst... run m0akd0g3");
             //PWA patch
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js');
@@ -244,6 +246,15 @@
                 await registerStupidCommand("apk", "This is not Alphine! (iSH? Random embedded? Who are you?");
                 await registerStupidCommand("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
                 await registerStupidCommand("curl", "Read |wget|, but this won't ever work.");
+                await registerCommand("m0akd0g3", "hmmm", "m0akd0g3", async function (args) {
+                    toggleRainbow();
+                    if (!rainbowEnabled) {
+                        await printToLog("Aww, no more rainbow? Dang.");
+                        
+                    }else{
+                        await printToLog("# LETS ROCK BABY!!");
+                    }
+                }, false); 
                 await registerCommand("cd", "Changes the current directory", "moakdoge", async function (args) {
                     const path = args[1] ?? "/";
                     const changed = await fileManager.setDirectory(path);

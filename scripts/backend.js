@@ -6,6 +6,7 @@ const mainBody = document.getElementById("main-body");
 const birthday = new Date("2010-03-17T15:00:04.000Z");
 const startupTime = new Date();
 const mobileUser = window.innerWidth < 640;
+let attemptsToOpen = 0;
 
 
 async function getStartupTime() {
@@ -14,7 +15,8 @@ async function getStartupTime() {
 
 /** @type {string: string} */
 const exceptions = {
-    notFound: "Command %s is not found."
+    notFound: "Command %s is not found.",
+    commandError: "Error running command: %s"
 }
 /** @type {MainCommand[]} */
 let commands = [];
@@ -113,6 +115,7 @@ async function aliasCommand(new_inp, old) {
 }
 
 /** @param {string} content */
+/** @param {string} content */
 async function formatContent(content) {
     const asciiArtBlocks = [];
     const asciiArtToken = (index) => `@@ASCII_ART_BLOCK_${index}@@`;
@@ -124,17 +127,20 @@ async function formatContent(content) {
         .replaceAll("'", "&#39;");
 
     if (mobileUser) {
-        content = content.replace(/(^|\r?\n)[ \t]*;\{[^}]*\}[ \t]*(?:\r?\n|$)/g, "$1");
+        content = content
+            // 1. Remove standalone ;{...} blocks (matching up to the first closing brace)
+            .replace(/(?:^|\r?\n|\\n)[ \t]*;\{[^}]*\}[ \t]*(?=\r?\n|\\n|$)/g, "")
+            // 2. Remove any remaining inline ;{...} blocks
+            .replace(/;\{[^}]*\}/g, "")
+            // 3. Clean up leading newlines if the removed block was at the start
+            .replace(/^(?:\r?\n|\\n)+/, "");
+    } else {
+        content = content.replace(/;\{([\s\S]*?)\}/g, (match, block) => {
+            const index = asciiArtBlocks.length;
+            asciiArtBlocks.push(block);
+            return asciiArtToken(index);
+        });
     }
-
-    content = content.replace(/;\{([\s\S]*?)\}/g, (match, block) => {
-        if (mobileUser) {
-            return "";
-        }
-        const index = asciiArtBlocks.length;
-        asciiArtBlocks.push(block);
-        return asciiArtToken(index);
-    });
 
     const disableFormattingMarker = "--disable-text-formatting--";
     const disableFormatting = content.includes(disableFormattingMarker);
@@ -160,6 +166,7 @@ async function formatContent(content) {
     } else {
         content = content.replace(disableFormattingMarker, "");
     }
+
     for (let name in string_variables) {
         let callback = string_variables[name];
         let replacement = String(await callback());
@@ -172,6 +179,9 @@ async function formatContent(content) {
         content = content.replaceAll(token, () => block);
     }
 
+    if (mobileUser) {
+        content = content.replace(/(?:<br\s*\/?>|\r?\n|\\n|\s)+$/gi, "");
+    }
     return content;
 }
 async function printToLog(content, raw = false) {
@@ -215,7 +225,6 @@ async function scrollToBottom() {
 }
 
 async function _resizeLog() {
-    console.log("resize, mobile user:", mobileUser);
     if (!mobileUser) {
         return;
     }
@@ -242,27 +251,6 @@ async function resizeCommandInput() {
     await scrollToBottom();
 }
 
-const konamiCode = [
-    "arrowup", "arrowup", "arrowdown", "arrowdown",
-    "arrowleft", "arrowright", "arrowleft", "arrowright",
-    "b", "a", "start"
-];
-let konamiProgress = 0;
-
-document.addEventListener("keydown", (event) => {
-    const key = event.key === "Enter" ? "start" : event.key.toLowerCase();
-
-    if (key === konamiCode[konamiProgress]) {
-        konamiProgress++;
-    } else {
-        konamiProgress = key === konamiCode[0] ? 1 : 0;
-    }
-
-    if (konamiProgress === konamiCode.length) {
-        window.location.href = "https://scatty.ing";
-        konamiProgress = 0;
-    }
-});
 
 /**
  * Splits input into tokens while preserving quoted arguments.
@@ -313,7 +301,11 @@ async function runCommand(args, addToHistory = true) {
         commandHistory.push(args.join(" "));
     }
     if (found) {
-        await found.callback(args);
+        try {
+            await found.callback(args);
+        } catch (c) {
+            await raiseError(String(c), exceptions.commandError);
+        }
         cursor = 0;
         await scrollToBottom();
         return true;
@@ -513,6 +505,16 @@ const windowElement = document.getElementById("window");
 const found = document.querySelector(".title-bar");
 const foundB = document.querySelector(".close-button");
 const win = registerWindow(windowElement, found, foundB, () => {
+    attemptsToOpen += 1;
+    if (attemptsToOpen >= 3) {
+        formatContent("Go check out scatty at [scatty.ing](https://scatty.ing). Also, please stop trying to close this.").then(
+            function (out) {
+                alertUser("moakdoge", out);
+            }
+        );
+        attemptsToOpen = 0;
+        return false;
+    }
     alertUser("System", "Why would you try to close this? ")
     return false;
 });
@@ -529,6 +531,5 @@ if (mobileUser && window.visualViewport) {
         windowElement.style.height = "95%";
         document.documentElement.style.setProperty('--mobile-visible', 'none');
         await _resizeLog();
-        console.log("mobile");
     }
 })();

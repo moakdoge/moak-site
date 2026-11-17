@@ -106,6 +106,8 @@ html, body {
     flex-direction: column;
     overflow: hidden;
     padding:8px;
+
+    
 }
 
 .title-bar {
