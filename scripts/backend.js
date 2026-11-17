@@ -237,6 +237,29 @@ async function resizeCommandInput() {
     await _resizeLog();
     await scrollToBottom();
 }
+
+const konamiCode = [
+    "arrowup", "arrowup", "arrowdown", "arrowdown",
+    "arrowleft", "arrowright", "arrowleft", "arrowright",
+    "b", "a", "start"
+];
+let konamiProgress = 0;
+
+document.addEventListener("keydown", (event) => {
+    const key = event.key === "Enter" ? "start" : event.key.toLowerCase();
+
+    if (key === konamiCode[konamiProgress]) {
+        konamiProgress++;
+    } else {
+        konamiProgress = key === konamiCode[0] ? 1 : 0;
+    }
+
+    if (konamiProgress === konamiCode.length) {
+        window.location.href = "https://scatty.ing";
+        konamiProgress = 0;
+    }
+});
+
 /**
  * Splits input into tokens while preserving quoted arguments.
  * @param {string} raw - The raw input command string.
