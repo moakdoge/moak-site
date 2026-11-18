@@ -92,6 +92,7 @@
         </div>
         <script src="scripts/strings.js" type="module"></script>
         <script src="scripts/file_system.js" type="module"></script>
+        <script src="scripts/console.js" type="module"></script>
         <script src="scripts/backend.js" type="module"></script>
         <script src="scripts/variables.js" type="module"></script>
         <script src="scripts/window_utils.js" type="module"></script>
@@ -100,6 +101,11 @@
             import {fileManager} from "./scripts/file_system.js";
             import {registerCommand, registerStupidCommand, aliasCommand, hostname, username, runCommand, printToLog} from "./scripts/backend.js";
             import {loadMessage} from "./scripts/strings.js";
+            import {ConsoleObject} from "./scripts/console.js";
+            const terminalLog = document.getElementById("term-log");
+            const inputPrompt = document.getElementById("input-prompt");
+
+            window.terminal = new ConsoleObject(terminalLog, inputPrompt);
             console.log("Psst... run m0akd0g3");
             //PWA patch
             if ('serviceWorker' in navigator) {
