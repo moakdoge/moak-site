@@ -112,7 +112,7 @@ export class ConsoleObject {
     async clear() {
         for (let i = this.logElement.children.length - 1; i >= 0; i--) {
             let child = this.logElement.children[i];
-            if (child !== this.logElement) {
+            if (child !== this.inputElement) {
                 this.logElement.removeChild(child);
             }
         }

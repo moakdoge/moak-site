@@ -317,10 +317,6 @@ const win = registerWindow(windowElement, found, foundB, () => {
     return false;
 });
 
-if (mobileUser && window.visualViewport) {
-    window.visualViewport.addEventListener("resize", _resizeLog);
-    window.visualViewport.addEventListener("scroll", _resizeLog);
-}
 
 initializeTerminal(
     terminalLog,
@@ -340,5 +336,10 @@ terminal.getPrompt = getPrompt;
         await terminal.resizeLog();
     }
 })();
+
+if (mobileUser && window.visualViewport) {
+    window.visualViewport.addEventListener("resize", terminal.resizeLog);
+    window.visualViewport.addEventListener("scroll", terminal.resizeLog);
+}
 
 terminal.initPrompt();
