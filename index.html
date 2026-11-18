@@ -74,22 +74,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <body id="main-body">
-    <div class="window" id="window">
-        <div class="title-bar">
-            <p>Terminal</p>
-            <button class="close-button">X</button>
-        </div>
-        
-        <div class="info-section">
-            <p>moakdoge.dev</p>
-        </div>
-        <div class="term-log" id="term-log">
-            <div class="input" id="input-prompt">
-                <span class="prompt" id="prompt-text">you@moakdoge.dev > </span>
-                <input class="command-box" id="command-input" value="test" spellcheck="false" autocorrect="off"
-                    autocapitalize="off" autocomplete="off">
-            </div>
-        </div>
         <script src="scripts/strings.js" type="module"></script>
         <script src="scripts/file_system.js" type="module"></script>
         <script src="scripts/constants.js" type="module"></script>
@@ -100,13 +84,14 @@
         <script src="scripts/easteregg.js" type="module"></script>
         <script type="module">
             import {fileManager} from "./scripts/file_system.js";
-            import {commands} from "./scripts/backend.js";
+            import {getCommands} from "./scripts/backend.js";
             import {getHostname, getUsername, setHostname, setUsername} from "./scripts/constants.js"
             import {loadMessage} from "./scripts/strings.js";
             import {terminal} from "./scripts/console.js";
             import {toggleRainbow, rainbowEnabled} from "./scripts/easteregg.js";
             import { alertUser, showImage } from "./scripts/window_utils.js";
             console.log("Psst... run m0akd0g3");
+            let commands = getCommands();
             //PWA patch
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js');
@@ -133,6 +118,7 @@
                     await terminal.print(output);
                 });
 
+    
                 await commands.register("history", "Shows the command history.", "moakdoge", async function (args) {
                     for (const command of terminal.commandHistory) {
                         await terminal.print(command);
@@ -342,7 +328,7 @@
                 
             })();
         </script>
-    </div>
+
 </body>
 
 </html>

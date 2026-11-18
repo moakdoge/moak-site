@@ -1,7 +1,7 @@
-import { terminal, initializeTerminal } from "./console.js"
+import { terminal, initializeTerminal, ConsoleObject } from "./console.js"
 import { CommandManager } from './commands.js';
 import {getMobile} from "./constants.js";
-import { registerWindow } from "./window_utils.js";
+import { createWindow, registerWindow } from "./window_utils.js";
 const terminalLog = document.getElementById("term-log");
 const inputPrompt = document.getElementById("input-prompt");
 const inputPromptText = document.getElementById("prompt-text");
@@ -11,25 +11,9 @@ let attemptsToOpen = 0;
 
 
 
-async function submitPrompt(rawInput) {
-    await terminal.resizeLog();
-    let success = await commands.run(rawInput);
-    if (!success) {
-        await terminal.raise(rawInput, "Command %s is not found.");
-    }
-
-    await terminal.toBottom();
-}
 
 
 
-
-terminalLog.addEventListener("click", (e) => {
-    if (document.activeElement != commandInput) {
-        commandInput.focus({ preventScroll: true });
-    }
-
-})
 
 
 document.addEventListener('click', async (e) => {
@@ -47,45 +31,103 @@ document.addEventListener('click', async (e) => {
 })
 
 
-const windowElement = document.getElementById("window");
-const found = document.querySelector(".title-bar");
-const foundB = document.querySelector(".close-button");
-const win = registerWindow(windowElement, found, foundB, () => {
-    attemptsToOpen += 1;
-    if (attemptsToOpen >= 3) {
-        alertUser("moakdoge", formatString("Go check out scatty at [scatty.ing](https://scatty.ing). Also, please stop trying to close this."));
-        attemptsToOpen = 0;
-        return false;
+
+/**
+ * Dynamically creates, mounts, and initializes a new terminal window.
+ *
+ * @param {ConsoleObject} terminal
+ * @param {number} [options.x=80] - Initial X position.
+ * @param {number} [options.y=80] - Initial Y position.
+ * @returns {{ windowElement: HTMLElement, win: Object }} The created DOM element and registered window instance.
+ */
+async function createTerminalWindow({
+    x = 80,
+    y = 80,
+    title = "Terminal",
+} = {}) {
+    let attemptsToClose = 0;
+
+    // 1. Create the base window
+    const windowElement = await createWindow(x, y, title);
+
+    // 2. Build and inject the terminal DOM structure
+    const contentContainer = windowElement.querySelector(".window-content") || windowElement;
+    contentContainer.insertAdjacentHTML("beforeend", `
+        <div class="info-section">
+            <p>moakdoge.dev</p>
+        </div>
+        <div class="term-log" id="term-log">
+            <div class="input" id="input-prompt">
+                <span class="prompt" id="prompt-text">${prompt}</span>
+                <input class="command-box" id="command-input" value="${'work'}" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off">
+            </div
+        </div>
+    `);
+
+    async function submitPrompt(rawInput) {
+        await terminal.resizeLog();
+        let success = await windowElement._commands.run(rawInput);
+        if (!success) {
+            await terminal.raise(rawInput, "Command %s is not found.");
+        }
+
+        await terminal.toBottom();
     }
-    alertUser("System", "Why would you try to close this? ")
-    return false;
-});
 
 
-initializeTerminal(
-    terminalLog,
-    inputPrompt,
-    windowElement,
-    inputPromptText,
-    commandInput,
-    submitPrompt
-);
 
-(async function () {
+    // 3. Query elements scoped to THIS window instance
+    const titleBar = windowElement.querySelector(".title-bar");
+    const closeButton = windowElement.querySelector(".close-button");
+    const terminalLog = windowElement.querySelector(".term-log");
+    const inputPrompt = windowElement.querySelector(".input");
+    const inputPromptText = windowElement.querySelector(".prompt");
+    const commandInput = windowElement.querySelector(".command-box");
+    let terminal = initializeTerminal(terminalLog,inputPrompt, windowElement, inputPromptText, commandInput, submitPrompt);
+    // 4. Register window & custom close behavior
+    const win = registerWindow(windowElement, titleBar, closeButton, () => {
+        attemptsToClose += 1;
+        if (attemptsToClose >= 3) {
+            alertUser("moakdoge", formatString("Go check out scatty at [scatty.ing](https://scatty.ing). Also, please stop trying to close this."));
+            attemptsToClose = 0;
+            return false;
+        }
+        alertUser("System", "Why would you try to close this? ");
+        return false;
+    });
+    let commands = new CommandManager(terminal);
+    windowElement._commands  = commands;
+
+
+    // 6. Handle mobile layout & viewport listeners
     if (getMobile()) {
         windowElement.style.width = "100%";
         windowElement.style.height = "95%";
-        document.documentElement.style.setProperty('--mobile-visible', 'none');
-        await terminal.resizeLog();
-    }
-})();
+        document.documentElement.style.setProperty("--mobile-visible", "none");
+        terminal.resizeLog();
 
-if (getMobile() && window.visualViewport) {
-    window.visualViewport.addEventListener("resize", terminal.resizeLog);
-    window.visualViewport.addEventListener("scroll", terminal.resizeLog);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", () => terminal.resizeLog());
+            window.visualViewport.addEventListener("scroll", () => terminal.resizeLog());
+        }
+    }
+
+    terminal.initPrompt();
+    terminalLog.addEventListener("click", (e) => {
+    if (document.activeElement != commandInput) {
+        commandInput.focus({ preventScroll: true });
+    }
+
+})
+
+    return { windowElement, win, terminal, commands};
 }
 
-terminal.initPrompt();
-
 /** @type {CommandManager} */
-export const commands = new CommandManager(terminal);
+let commands;
+let out = await createTerminalWindow();
+commands = out.commands;
+export let getCommands = () => {return commands;};
+
+
+
