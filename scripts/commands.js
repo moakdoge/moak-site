@@ -90,7 +90,7 @@ export class CommandManager {
     async #run(args, addToHistory = true) {
         let commandName = args[0];
         if (addToHistory) {
-            this.terminal.commandHistory.push(commandName);
+            this.terminal.commandHistory.push(args.join(" "));
         }
         let found = await this.find(commandName);
         if (found) {

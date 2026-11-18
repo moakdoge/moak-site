@@ -83,3 +83,10 @@ registerStringVariable("uptime-hour", async function() {
 registerStringVariable("uptime-day", async function() {
     return Math.floor(await getUptimeMilliseconds() / 86400000);
 });
+
+registerStringVariable("pronounce", async function() {
+    return "/moʊk/";
+});
+registerStringVariable("nick", async function() {
+    return "Moak";
+});

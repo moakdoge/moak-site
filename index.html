@@ -104,8 +104,8 @@
             import {getHostname, getUsername, setHostname, setUsername} from "./scripts/constants.js"
             import {loadMessage} from "./scripts/strings.js";
             import {terminal} from "./scripts/console.js";
-            import {toggleRainbow, rainbowEnabled} from "./scripts/easteregg.js"
-        
+            import {toggleRainbow, rainbowEnabled} from "./scripts/easteregg.js";
+            import { alertUser, showImage } from "./scripts/window_utils.js";
             console.log("Psst... run m0akd0g3");
             //PWA patch
             if ('serviceWorker' in navigator) {
@@ -211,7 +211,18 @@
                         await terminal.print(file.name);
                     }
                 });
+                
+                await commands.register("open-window", "Opens a testing window.", "moakdoge", async function (args){
+                    let title = args[1] || "System";
+                    let content = args[2] || "Hello, world! (no content provided)";
+                    await alertUser(title, content);
+                }, true);
 
+                await commands.register("open-image", "Opens a testing image.", "moakdoge", async function (args){
+                    let title = args[1] || "System";
+                    let url = args[2] || "images/icon-512.png";
+                    await showImage(title, url);
+                }, true);
                 await commands.register("cat", "Prints a file", "moakdoge", async function (args) {
                     const path = args[1];
                     if (path === undefined) {

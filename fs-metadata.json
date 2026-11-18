@@ -34,7 +34,7 @@
     {
       "name": "index.html",
       "extension": ".html",
-      "size": 15090,
+      "size": 16746,
       "path": "index.html"
     },
     {
@@ -135,7 +135,7 @@
         {
           "name": "about.txt",
           "extension": ".txt",
-          "size": 1788,
+          "size": 1792,
           "path": "messages/about.txt"
         },
         {
@@ -153,31 +153,61 @@
         {
           "name": "easteregg.js",
           "extension": ".js",
-          "size": 1303,
+          "size": 1317,
           "path": "scripts/easteregg.js"
+        },
+        {
+          "name": "commands.js",
+          "extension": ".js",
+          "size": 3441,
+          "path": "scripts/commands.js"
+        },
+        {
+          "name": "console.js",
+          "extension": ".js",
+          "size": 6669,
+          "path": "scripts/console.js"
+        },
+        {
+          "name": "constants.js",
+          "extension": ".js",
+          "size": 2988,
+          "path": "scripts/constants.js"
         },
         {
           "name": "variables.js",
           "extension": ".js",
-          "size": 2587,
+          "size": 2889,
           "path": "scripts/variables.js"
         },
         {
           "name": "backend.js",
           "extension": ".js",
-          "size": 16127,
+          "size": 2620,
           "path": "scripts/backend.js"
+        },
+        {
+          "name": "strings.js",
+          "extension": ".js",
+          "size": 4691,
+          "path": "scripts/strings.js"
         },
         {
           "name": "file_system.js",
           "extension": ".js",
-          "size": 4443,
+          "size": 4450,
           "path": "scripts/file_system.js"
+        },
+        {
+          "name": "command_type.js",
+          "extension": ".js",
+          "size": 746,
+          "path": "scripts/command_type.js"
         },
         {
           "name": "window_utils.js",
           "extension": ".js",
-          "size": 1005,
+          "size": 4865,
           "path": "scripts/window_utils.js"
         }
       ],
