@@ -1,5 +1,6 @@
 import * as strutils from './strings.js';
 import {fileManager} from "./file_system.js";
+import {terminal, ConsoleObject, initializeTerminal} from "./console.js"
 const terminalLog = document.getElementById("term-log");
 const inputPrompt = document.getElementById("input-prompt");
 const inputPromptText = document.getElementById("prompt-text");
@@ -22,8 +23,6 @@ const exceptions = {
 /** @type {MainCommand[]} */
 let commands = [];
 /** @type {string[]} */
-let commandHistory = [];
-let cursor = 0;
 export let username = "root";
 export let hostname = "moakdoge.dev";
 
@@ -66,26 +65,19 @@ export async function registerStupidCommand(name, error, hidden = true, descript
         error = await strutils.loadMessage(error);
     }
     async function callback() {
-        await printToLog(error);
+        await terminal.print(error);
     }
     new MainCommand(name, description, author, callback, hidden);
 }
+
+
+
 async function getPrompt() {
     let prompt = `${username}@${hostname}`
     let path = await fileManager.getDirectory();
     let final =`${prompt} (${path}) ❯ `
     return final;
 }
-
-async function clearLog() {
-    for (let i = terminalLog.children.length - 1; i >= 0; i--) {
-        let child = terminalLog.children[i];
-        if (child !== inputPrompt) {
-            terminalLog.removeChild(child);
-        }
-    }
-}
-
 
 
 export async function aliasCommand(new_inp, old) {
@@ -95,72 +87,9 @@ export async function aliasCommand(new_inp, old) {
     }
 }
 
-export async function printToLog(content, raw = false) {
-    let fixed_content = raw ? String(content) : await strutils.formatString(content)
-    let mainDiv = document.createElement("div");
-    mainDiv.className = "log";
-    let contentItem = document.createElement("span");
-    contentItem.className = "content";
-    if (raw) {
-        contentItem.textContent = fixed_content;
-        contentItem.style.whiteSpace = "pre-wrap";
-    } else {
-        contentItem.innerHTML = fixed_content;
-    }
 
-    mainDiv.appendChild(contentItem);
-    terminalLog.insertBefore(mainDiv, inputPrompt);
-    await scrollToBottom();
-}
 
-async function initPrompt() {
-    inputPromptText.textContent = await getPrompt();
-    commandInput.value = "";
-    if (cursor != 0 && cursor <= commandHistory.length) {
-        let val = commandHistory[commandHistory.length - cursor];
-        if (val == undefined) {
-            cursor = commandHistory.length - 1;
-            val = "";
-        }
-        commandInput.value = val
-    } else {
-        cursor = 0;
-    }
-    await resizeCommandInput();
-}
 
-async function scrollToBottom() {
-    requestAnimationFrame(() => {
-        terminalLog.scrollTop = terminalLog.scrollHeight;
-    });
-}
-
-async function _resizeLog() {
-    if (!mobileUser) {
-        return;
-    }
-    let height = window.visualViewport
-    ? window.visualViewport.height
-    : window.innerHeight; 
-
-    if (window.customHeight) {
-        height = window.customHeight;
-        console.log(window.customHeight);
-    }
-
-    let pxHeight = height * 0.95;
-    windowElement.style.height =`${Math.floor(pxHeight)}px`;
-    const viewportOffset = window.visualViewport?.offsetTop ?? 0;
-    windowElement.style.top = `${Math.floor(viewportOffset + height / 2)}px`;
-
-}
-
-async function resizeCommandInput() {
-
-    commandInput.style.width = Math.max(commandInput.value.length, 1) + "ch";
-    await _resizeLog();
-    await scrollToBottom();
-}
 
 
 /**
@@ -208,45 +137,30 @@ async function findCommand(name) {
 export async function runCommand(args, addToHistory = true) {
     let commandName = args[0];
     let found = await findCommand(commandName);
-    if (addToHistory) {
-        commandHistory.push(args.join(" "));
-    }
     if (found) {
         try {
             await found.callback(args);
         } catch (c) {
-            await raiseError(String(c), exceptions.commandError);
+            await terminal.raise(String(c), exceptions.commandError);
         }
-        cursor = 0;
-        await scrollToBottom();
         return true;
     }
-    await scrollToBottom();
     return false;
 }
 
-async function raiseError(command, message) {
-    const error = message.replace("%s", command);
-    const combined = `<span style="color: red;">${error}</span>`;
-    await printToLog(combined);
-}
-async function submitPrompt() {
-    //For now, this'll just handle the equivalent of an enter
-    await _resizeLog();
-    let command = commandInput.value.trim();
-    let combined = `&&${await getPrompt() + command}&&`;
-    await printToLog(combined);
-    let parts = await processCommandInput(command);
+
+async function submitPrompt(rawInput) {
+    await terminal.resizeLog();
+    let parts = await processCommandInput(rawInput);
     let success = await runCommand(parts);
     if (!success) {
-        await raiseError(parts[0], exceptions.notFound);
+        await terminal.raise(parts[0], exceptions.notFound);
     }
 
-    await initPrompt();
-    await scrollToBottom();
+    await terminal.toBottom();
 }
 
-initPrompt();
+
 
 async function createWindow(w, h, title, closeCallback) {
     const newElement = document.createElement("div");
@@ -366,28 +280,6 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
 
 }
 
-commandInput.addEventListener('input', async () => await resizeCommandInput());
-
-inputPrompt.addEventListener('keydown', async (e) => {
-    if (e.key === 'Enter') {
-        await submitPrompt();
-    }
-    if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        cursor++;
-        await initPrompt();
-    }
-    if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        cursor--;
-        await initPrompt();
-    }
-
-    if (e.key == "Tab") {
-        e.preventDefault();
-    }
-});
-
 terminalLog.addEventListener("click", (e) => {
     if (document.activeElement != commandInput) {
         commandInput.focus({ preventScroll: true });
@@ -402,12 +294,11 @@ document.addEventListener('click', async (e) => {
         e.preventDefault();
         const command = cmdElement.dataset.command || cmdElement.textContent;
         commandInput.value = String(command).trim();
-        await _resizeLog();
-        await resizeCommandInput();
         if (mobileUser) {
             await scrollToBottom();
         }
-        await submitPrompt();
+        await terminal.prompt(commandInput.value);
+        await terminal.initPrompt();
     }
 })
 
@@ -431,12 +322,23 @@ if (mobileUser && window.visualViewport) {
     window.visualViewport.addEventListener("scroll", _resizeLog);
 }
 
-
+initializeTerminal(
+    terminalLog,
+    inputPrompt,
+    windowElement,
+    mobileUser,
+    inputPromptText,
+    commandInput,
+    submitPrompt
+);
+terminal.getPrompt = getPrompt;
 (async function (){
     if (mobileUser) {
         windowElement.style.width = "100%";
         windowElement.style.height = "95%";
         document.documentElement.style.setProperty('--mobile-visible', 'none');
-        await _resizeLog();
+        await terminal.resizeLog();
     }
 })();
+
+terminal.initPrompt();
