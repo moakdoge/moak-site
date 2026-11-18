@@ -6,11 +6,11 @@ const konamiCode = [
     "b", "a", "start"
 ];
 let konamiProgress = 0;
-let rainbowEnabled = false;
+export let rainbowEnabled = false;
 let rainbowProgress = 0;
 let oldValue = null;
 
-function toggleRainbow() {
+export function toggleRainbow() {
     rainbowEnabled=!rainbowEnabled;
     if (rainbowEnabled) {
         oldValue = document.documentElement.style.getPropertyValue("--text-color");

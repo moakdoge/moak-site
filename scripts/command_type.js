@@ -14,10 +14,10 @@ export class MainCommand {
         this.callback = callback;
         this.hidden = hidden;
         /* @type {string[]} */
-        this.aliases = []
+        this.aliases = [];
     }
 
     toString() {
-        return `${this.name}: (hidden: ${this.hidden ? "yes" : "no"}, description="${this.description}", author="${this.author}", aliases=${this.aliases})`;
+        return `${this.name}: (hidden: ${this.hidden ? "yes" : "no"}, description="${this.description}", author="${this.author}", aliases=${String(this.aliases)})`;
     }
 }

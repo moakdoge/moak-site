@@ -92,17 +92,20 @@
         </div>
         <script src="scripts/strings.js" type="module"></script>
         <script src="scripts/file_system.js" type="module"></script>
+        <script src="scripts/constants.js" type="module"></script>
         <script src="scripts/console.js" type="module"></script>
-        <script src="scripts/backend.js" type="module"></script>
         <script src="scripts/backend.js" type="module"></script>
         <script src="scripts/variables.js" type="module"></script>
         <script src="scripts/window_utils.js" type="module"></script>
         <script src="scripts/easteregg.js" type="module"></script>
         <script type="module">
             import {fileManager} from "./scripts/file_system.js";
-            import {hostname, username, commands} from "./scripts/backend.js";
+            import {commands} from "./scripts/backend.js";
+            import {getHostname, getUsername, setHostname, setUsername} from "./scripts/constants.js"
             import {loadMessage} from "./scripts/strings.js";
             import {terminal} from "./scripts/console.js";
+            import {toggleRainbow, rainbowEnabled} from "./scripts/easteregg.js"
+        
             console.log("Psst... run m0akd0g3");
             //PWA patch
             if ('serviceWorker' in navigator) {
@@ -111,17 +114,17 @@
             (async function () {
             
                 await commands.register("help", "Helps you.", "moakdoge", async function (args) {
-                    for (let command in commands) {
-                        let description = commands[command].description;
+                    for (const command of commands.commands) {
+                        let description = command.description;
 
                         if (description == undefined) {
                             continue;
                         }
 
-                        if (commands[command].hidden) {
+                        if (command.hidden) {
                             continue;
                         }
-                        await terminal.print(commands[command].name + ": " + description);
+                        await terminal.print(command.name + ": " + description);
                     }
                 })
 
@@ -131,8 +134,8 @@
                 });
 
                 await commands.register("history", "Shows the command history.", "moakdoge", async function (args) {
-                    for (let i = 0; i < commandHistory.length; i++) {
-                        await terminal.print(commandHistory[i]);
+                    for (const command of terminal.commandHistory) {
+                        await terminal.print(command);
                     }
                 })
 
@@ -291,23 +294,23 @@
 
                 await commands.registerText("ai-use", `$message ai-use`, true, "How AI was used on this site.", "moakdoge");
 
-                await commands.register("hostname", `Sets or reads your hostname. Defaults to ${hostname}.`, "moakdoge", async function (args) {
+                await commands.register("hostname", `Sets or reads your hostname. Defaults to ${getHostname()}.`, "moakdoge", async function (args) {
                     let newHostName = args[1];
                     if (newHostName == undefined) {
-                        await terminal.print(`Your current hostname is ${hostname}.`);
+                        await terminal.print(`Your current hostname is ${getHostname()}.`);
                         return;
                     }
-                    hostname = newHostName;
-                    await terminal.print(`Fine, I'll change the hostname. Grumble. Your new hostname is ${hostname}.`)
+                    setHostname(newHostName);
+                    await terminal.print(`Fine, I'll change the hostname. Grumble. Your new hostname is ${getHostname()}.`)
                 });
-                await commands.register("username", `Sets or reads your username. Defaults to ${username}.`, "moakdoge", async function (args) {
+                await commands.register("username", `Sets or reads your username. Defaults to ${getUsername()}.`, "moakdoge", async function (args) {
                     let newUser = args[1];
                     if (newUser == undefined) {
-                        await terminal.print(`Your current username is ${username}.`);
+                        await terminal.print(`Your current username is ${getUsername()}.`);
                         return;
                     }
-                    username = newUser;
-                    await terminal.print(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${username}.`)
+                    setUsername(newUser);
+                    await terminal.print(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${getUsername()}.`)
                 });
 
                 await commands.register("fastfetch", "Gets some information about this 'OS'.", "moakdoge", async function (args) {

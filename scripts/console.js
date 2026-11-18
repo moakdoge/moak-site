@@ -1,16 +1,16 @@
 //@ts-check
 import * as strutils from "./strings.js"
+import { getMobile, getPrompt } from "./constants.js";
 export class ConsoleObject {
     /** 
      * @param {HTMLDivElement} logElement 
      * @param {HTMLTextAreaElement} inputPrompt *
      * @param {HTMLDivElement} windowElement
-     * @param {Boolean} mobileUser
     * @param {HTMLElement} inputPromptText
     * @param {HTMLTextAreaElement} commandInput
     * @param {(rawInput: string) => (void|Promise<void>)} onEnter
     */
-    constructor(logElement, inputPrompt, windowElement, mobileUser, inputPromptText, commandInput, onEnter) {
+    constructor(logElement, inputPrompt, windowElement, inputPromptText, commandInput, onEnter) {
         /** @type {string[]} */
         this.logs = [];
         /** @type {HTMLDivElement} */
@@ -19,8 +19,6 @@ export class ConsoleObject {
         this.inputElement = inputPrompt;
         /** @type {HTMLDivElement} */
         this.windowElement = windowElement;
-        /** @type {Boolean} */
-        this.mobileUser =  mobileUser;
         /** @type {HTMLElement} */
         this.promptTextElement = inputPromptText;
         /** @type {HTMLTextAreaElement} */
@@ -120,7 +118,7 @@ export class ConsoleObject {
     }
 
     async resizeLog() {
-        if (!this.mobileUser) {
+        if (!getMobile()) {
             return;
         }
         let height = window.visualViewport
@@ -148,7 +146,7 @@ export class ConsoleObject {
 
     /** @returns {Promise<string>} */
     async getPrompt() {
-        return "unknown";
+        return await getPrompt();
     }
     async clearPrompt() {
         //For now, this'll just handle the equivalent of an enter
@@ -193,7 +191,6 @@ export let terminal;
  * @param {HTMLDivElement} logElement
  * @param {HTMLTextAreaElement} inputPrompt
  * @param {HTMLDivElement} windowElement
- * @param {Boolean} mobileUser
  * @param {HTMLElement} inputPromptText
  * @param {HTMLTextAreaElement} commandInput
  * @param {(rawInput: string) => (void|Promise<void>)} onEnter
@@ -203,7 +200,6 @@ export function initializeTerminal(
     logElement,
     inputPrompt,
     windowElement,
-    mobileUser,
     inputPromptText,
     commandInput,
     onEnter
@@ -212,7 +208,6 @@ export function initializeTerminal(
         logElement,
         inputPrompt,
         windowElement,
-        mobileUser,
         inputPromptText,
         commandInput,
         onEnter

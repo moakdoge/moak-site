@@ -1,5 +1,5 @@
 //@ts-check
-import {MainCommand} from "./command_type.js";
+import { MainCommand } from "./command_type.js";
 import * as strutils from "./strings.js";
 import { ConsoleObject } from "./console.js";
 export class CommandManager {
@@ -41,20 +41,21 @@ export class CommandManager {
         if (content.startsWith("$message")) {
             content = String(content).replace("$message", "");
             content = content.trim();
-    
+
             content = await strutils.loadMessage(content);
         }
-        let term = this.terminal 
+        let term = this.terminal
         async function callback() {
             await term.print(content);
         }
-        new MainCommand(name, description, author, callback, hidden);
+        let tmpCommand = new MainCommand(name, description, author, callback, hidden);
+        this.commands.push(tmpCommand);
     }
 
     /**
      * 
      * @param {string} cmd
-     * @return {Promise<MainCommand | undefined>}
+     * @return {Promise<MainCommand | null>}
      */
     async find(cmd) {
         for (let i = 0; i < this.commands.length; i++) {
@@ -66,7 +67,7 @@ export class CommandManager {
                 return command;
             }
         }
-        return undefined;
+        return null;
     }
     /**
      * Creates an alias for a certain command.
@@ -86,7 +87,7 @@ export class CommandManager {
       *  @param {Boolean} [addToHistory=true]
       *  @returns {Promise<boolean>}
     */
-    async #run(args, addToHistory=true) {
+    async #run(args, addToHistory = true) {
         let commandName = args[0];
         if (addToHistory) {
             this.terminal.commandHistory.push(commandName);
@@ -110,10 +111,10 @@ export class CommandManager {
      * @param {boolean} [addToHistory=true] 
      * @returns {Promise<boolean>}
      */
-    async run(input, addToHistory=true) {
+    async run(input, addToHistory = true) {
         let parts = await strutils.processCommandInput(input);
         return await this.#run(parts, addToHistory);
     }
 
-    
+
 }

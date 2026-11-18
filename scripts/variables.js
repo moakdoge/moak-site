@@ -1,16 +1,16 @@
 import {registerStringVariable} from './strings.js';
-import {hostname, username, getStartupTime} from "./backend.js";
-const birthday = new Date("2010-03-17T15:00:04.000Z");
+import {getHostname, getUsername, getStartupTime, birthday} from "./constants.js";
+
 
 /* This is for purely variables. it loads AFTER backend.js and is exclusively used to keep the main one clean. */
 
 
 registerStringVariable("username", async function() {
-    return username;
+    return getUsername();
 });
 
 registerStringVariable("hostname", async function() {
-    return hostname;
+    return getHostname();
 });
 
 registerStringVariable("useragent", async function() {

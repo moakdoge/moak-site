@@ -1,47 +1,21 @@
-import * as strutils from './strings.js';
-import {fileManager} from "./file_system.js";
-import {terminal, initializeTerminal} from "./console.js"
+import { terminal, initializeTerminal } from "./console.js"
 import { CommandManager } from './commands.js';
+import {getMobile} from "./constants.js";
 const terminalLog = document.getElementById("term-log");
 const inputPrompt = document.getElementById("input-prompt");
 const inputPromptText = document.getElementById("prompt-text");
 const commandInput = document.getElementById("command-input");
 const mainBody = document.getElementById("main-body");
-export const mobileUser = window.innerWidth < 640;
-const startupTime = new Date();
 let attemptsToOpen = 0;
-
-
-export async function getStartupTime() {
-    return startupTime;
-}
-/** @type {string[]} */
-export let username = "root";
-export let hostname = "moakdoge.dev";
-
 let windowElements = [];
-
-
-
-
-
-async function getPrompt() {
-    let prompt = `${username}@${hostname}`
-    let path = await fileManager.getDirectory();
-    let final =`${prompt} (${path}) ❯ `
-    return final;
-}
-
-
-
 
 
 
 async function submitPrompt(rawInput) {
     await terminal.resizeLog();
-    let success = commands.run(rawInput);
+    let success = await commands.run(rawInput);
     if (!success) {
-        await terminal.raise(parts[0], exceptions.notFound);
+        await terminal.raise(rawInput, "Command %s is not found.");
     }
 
     await terminal.toBottom();
@@ -83,7 +57,7 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
 
     windowElements.push(windowElement);
     titleBar.addEventListener("pointerdown", (e) => {
-        if (!mobileUser) {
+        if (!getMobile()) {
             const bounds = windowElement.getBoundingClientRect();
             dragOffset = {
                 x: e.clientX - bounds.left,
@@ -93,7 +67,7 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
             titleBar.style.cursor = "grabbing";
         }
     });
-    
+
     function focusWindow() {
         windowElement.style.zIndex = 1;
         windowElement.classList.add("focused");
@@ -134,10 +108,10 @@ function registerWindow(windowElement, titleBar, closeButton, closeCallback) {
                 return;
             }
         }
-            const windowIndex = windowElements.indexOf(windowElement);
-            if (windowIndex !== -1) {
-                windowElements.splice(windowIndex, 1);
-            }
+        const windowIndex = windowElements.indexOf(windowElement);
+        if (windowIndex !== -1) {
+            windowElements.splice(windowIndex, 1);
+        }
 
         windowElement.remove();
         if (windowElements.length > 0) {
@@ -171,7 +145,7 @@ terminalLog.addEventListener("click", (e) => {
     if (document.activeElement != commandInput) {
         commandInput.focus({ preventScroll: true });
     }
-    
+
 })
 
 
@@ -181,10 +155,10 @@ document.addEventListener('click', async (e) => {
         e.preventDefault();
         const command = cmdElement.dataset.command || cmdElement.textContent;
         commandInput.value = String(command).trim();
-        if (mobileUser) {
+        if (getMobile()) {
             await scrollToBottom();
         }
-        await terminal.prompt(commandInput.value);2
+        await terminal.prompt(commandInput.value); 2
         await terminal.initPrompt();
     }
 })
@@ -209,14 +183,13 @@ initializeTerminal(
     terminalLog,
     inputPrompt,
     windowElement,
-    mobileUser,
     inputPromptText,
     commandInput,
     submitPrompt
 );
-terminal.getPrompt = getPrompt;
-(async function (){
-    if (mobileUser) {
+
+(async function () {
+    if (getMobile()) {
         windowElement.style.width = "100%";
         windowElement.style.height = "95%";
         document.documentElement.style.setProperty('--mobile-visible', 'none');
@@ -224,7 +197,7 @@ terminal.getPrompt = getPrompt;
     }
 })();
 
-if (mobileUser && window.visualViewport) {
+if (getMobile() && window.visualViewport) {
     window.visualViewport.addEventListener("resize", terminal.resizeLog);
     window.visualViewport.addEventListener("scroll", terminal.resizeLog);
 }
