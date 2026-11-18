@@ -115,3 +115,23 @@ export async function loadMessage(messageId) {
     cachedMessages[messageId] = text;
     return text;
 }
+/**
+ * Splits input into tokens while preserving quoted arguments.
+ * @param {string} raw - The raw input command string.
+ * @returns {Promise<string[]>} An array of parsed arguments.
+ */
+export async function processCommandInput(raw) {
+    const regex = /"[^"]*"|'[^']*'|\S+/g;
+    const matches = raw.match(regex) || [];
+
+    // Strip outer quotes from each token
+    return matches.map(token => {
+        if (
+            (token.startsWith('"') && token.endsWith('"')) ||
+            (token.startsWith("'") && token.endsWith("'"))
+        ) {
+            return token.slice(1, -1);
+        }
+        return token;
+    });
+}

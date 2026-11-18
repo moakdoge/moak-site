@@ -1,6 +1,7 @@
 import * as strutils from './strings.js';
 import {fileManager} from "./file_system.js";
-import {terminal, ConsoleObject, initializeTerminal} from "./console.js"
+import {terminal, initializeTerminal} from "./console.js"
+import { CommandManager } from './commands.js';
 const terminalLog = document.getElementById("term-log");
 const inputPrompt = document.getElementById("input-prompt");
 const inputPromptText = document.getElementById("prompt-text");
@@ -14,61 +15,13 @@ let attemptsToOpen = 0;
 export async function getStartupTime() {
     return startupTime;
 }
-
-/** @type {string: string} */
-const exceptions = {
-    notFound: "Command %s is not found.",
-    commandError: "Error running command: %s"
-}
-/** @type {MainCommand[]} */
-let commands = [];
 /** @type {string[]} */
 export let username = "root";
 export let hostname = "moakdoge.dev";
 
 let windowElements = [];
 
-/** @type {string: string} */
-let cached_messages = {}
 
-
-/** @type {string: async function} */
-let string_variables = {}
-
-class MainCommand {
-    constructor(name, description, author, callback, hidden) {
-        this.name = name;
-        this.description = description;
-        this.author = author;
-        this.callback = callback;
-        this.hidden = hidden;
-        /* @type {string[]} */
-        this.aliases = []
-        commands.push(this);
-    }
-
-    toString() {
-        return `${this.name}: (hidden: ${this.hidden ? "yes" : "no"}, description="${this.description}", author="${this.author}")`
-    }
-}
-
-export async function registerCommand(name, description, author, callback, hidden = false) {
-    new MainCommand(name, description, author, callback, hidden);
-}
-
-
-export async function registerStupidCommand(name, error, hidden = true, description = "We don't know...", author = "N/A") {
-    if (error.startsWith("$message")) {
-        error = String(error).replace("$message", "");
-        error = error.trim();
-
-        error = await strutils.loadMessage(error);
-    }
-    async function callback() {
-        await terminal.print(error);
-    }
-    new MainCommand(name, description, author, callback, hidden);
-}
 
 
 
@@ -80,79 +33,13 @@ async function getPrompt() {
 }
 
 
-export async function aliasCommand(new_inp, old) {
-    let found = await findCommand(old);
-    if (found) {
-        found.aliases.push(new_inp);
-    }
-}
 
 
-
-
-
-
-/**
- * Splits input into tokens while preserving quoted arguments.
- * @param {string} raw - The raw input command string.
- * @returns {string[]} An array of parsed arguments.
- */
-async function processCommandInput(raw) {
-    const regex = /"[^"]*"|'[^']*'|\S+/g;
-    const matches = raw.match(regex) || [];
-
-    // Strip outer quotes from each token
-    return matches.map(token => {
-        if (
-            (token.startsWith('"') && token.endsWith('"')) ||
-            (token.startsWith("'") && token.endsWith("'"))
-        ) {
-            return token.slice(1, -1);
-        }
-        return token;
-    });
-}
-
-/**
- * 
- * @param {string} name 
- * @returns {MainCommand?}
- */
-async function findCommand(name) {
-    for (let i = 0; i < commands.length; i++) {
-        let command = commands[i];
-        if (command.name == name) {
-            return command;
-        }
-        if (command.aliases.includes(name)) {
-            return command;
-        }
-    }
-}
-/** 
-  *  @param {string[]} args
-  *  @param {bool} addToHistory = true
-  *  @return {bool} success (true if succeeded; otherwise false)
-*/
-export async function runCommand(args, addToHistory = true) {
-    let commandName = args[0];
-    let found = await findCommand(commandName);
-    if (found) {
-        try {
-            await found.callback(args);
-        } catch (c) {
-            await terminal.raise(String(c), exceptions.commandError);
-        }
-        return true;
-    }
-    return false;
-}
 
 
 async function submitPrompt(rawInput) {
     await terminal.resizeLog();
-    let parts = await processCommandInput(rawInput);
-    let success = await runCommand(parts);
+    let success = commands.run(rawInput);
     if (!success) {
         await terminal.raise(parts[0], exceptions.notFound);
     }
@@ -297,7 +184,7 @@ document.addEventListener('click', async (e) => {
         if (mobileUser) {
             await scrollToBottom();
         }
-        await terminal.prompt(commandInput.value);
+        await terminal.prompt(commandInput.value);2
         await terminal.initPrompt();
     }
 })
@@ -343,3 +230,6 @@ if (mobileUser && window.visualViewport) {
 }
 
 terminal.initPrompt();
+
+/** @type {CommandManager} */
+export const commands = new CommandManager(terminal);

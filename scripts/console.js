@@ -177,7 +177,6 @@ export class ConsoleObject {
     /** @param {string} content */
     async prompt(content) {
         await this.#printPrompt();
-        this.commandHistory.push(content);
         this.cursor = 0;
         await this.onEnter(content);
         await this.initPrompt();
