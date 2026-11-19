@@ -1,8 +1,9 @@
+import { CommandContext } from "./ctx.js";
 export class MainCommand {
     /**
      * Command object.
      * @param {string} author 
-     * @param {(items: string[]) => void | Promise<void>} callback
+     * @param {(ctx: CommandContext) => void | Promise<void>} callback
      * @param {string} description
      * @param {boolean} [hidden=false] 
      * @param {string} name  

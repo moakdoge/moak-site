@@ -12,12 +12,12 @@ import { createWindow, registerWindow, alertUser } from "./window_utils.js";
  * @param {CommandManager | null} [copyCommands] - If you want your own set of commands or just to use the default (pass in a commands object to copy from)
  * @returns {{ windowElement: HTMLElement, win: Object }} The created DOM element and registered window instance.
  */
-export async function createTerminalWindow({
+export async function createTerminalWindow(
     x = 80,
     y = 80,
     title = "Terminal",
     copyCommands = null
-} = {}) {
+) {
 
     // 1. Create the base window
     const windowElement = await createWindow(x, y, title);
@@ -61,9 +61,11 @@ export async function createTerminalWindow({
 
     
     let commands = new CommandManager(terminal);
-    if (copyCommands != null) {
+    if (copyCommands) {
+        console.log("copy")
         commands.commands = copyCommands.commands;
     }
+    
     windowElement._commands  = commands;
 
 
@@ -102,7 +104,7 @@ export async function createTerminalWindow({
     })
 
 
-    return { windowElement, win, terminal, commands};
+    return {windowElement: windowElement, win:win, terminal:terminal, commands: commands};
 }
 
 /** @type {CommandManager} */

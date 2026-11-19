@@ -2,6 +2,7 @@
 import { MainCommand } from "./command_type.js";
 import * as strutils from "./strings.js";
 import { ConsoleObject } from "./console.js";
+import { CommandContext } from "./ctx.js";
 export class CommandManager {
     /** 
      * Manages commands. Shocker.
@@ -17,7 +18,7 @@ export class CommandManager {
     /**
      * Registers a core command with a callback.
      * @param {string} author 
-     * @param {(items: string[]) => void | Promise<void>} callback
+     * @param {(ctx: CommandContext) => void | Promise<void>} callback
      * @param {string} description
      * @param {boolean} [hidden=false] 
      * @param {string} name  
@@ -45,8 +46,10 @@ export class CommandManager {
             content = await strutils.loadMessage(content);
         }
         let term = this.terminal
-        async function callback() {
-            await term.print(content);
+        
+        /** @param {CommandManager} ctx */
+        async function callback(ctx) {
+            await ctx.terminal.print(content);
         }
         let tmpCommand = new MainCommand(name, description, author, callback, hidden);
         this.commands.push(tmpCommand);
@@ -95,7 +98,10 @@ export class CommandManager {
         let found = await this.find(commandName);
         if (found) {
             try {
-                await found.callback(args);
+                let ctx = new CommandContext(
+                    commandName, args, this.terminal, this
+                );
+                await found.callback(ctx);
             } catch (c) {
                 await this.terminal.raise(String(c), "Could not find command %s");
             }
