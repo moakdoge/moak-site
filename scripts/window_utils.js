@@ -83,25 +83,29 @@ export function registerWindow(windowElement, titleBar, closeButton, closeCallba
     closeButton.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
+        let doClose = true;
         if (closeCallback != undefined && closeCallback != null) {
-            let doClose = true;
             try {
                 doClose = closeCallback();
-            } catch {
+            } catch (c) {
+                console.error(c);
                 doClose = false;
             }
             if (!doClose) {
                 return;
             }
         }
-        const windowIndex = windowElements.indexOf(windowElement);
-        if (windowIndex !== -1) {
-            windowElements.splice(windowIndex, 1);
-        }
 
-        windowElement.remove();
-        if (windowElements.length > 0) {
-            windowElements[0]._focus();
+        if (doClose) {
+            const windowIndex = windowElements.indexOf(windowElement);
+            if (windowIndex !== -1) {
+                windowElements.splice(windowIndex, 1);
+            }
+
+            windowElement.remove();
+            if (windowElements.length > 0) {
+                windowElements[0]._focus();
+            }
         }
     });
 

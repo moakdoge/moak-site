@@ -70,264 +70,283 @@
 <title>moakdoge</title>
 <meta name="viewport" content="width-device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json" />
-<link rel="apple-touch-icon" sizes="180x180" href="/images/icon-180.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon-180.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
 <body id="main-body">
-        <script src="scripts/strings.js" type="module"></script>
-        <script src="scripts/file_system.js" type="module"></script>
-        <script src="scripts/constants.js" type="module"></script>
-        <script src="scripts/console.js" type="module"></script>
-        <script src="scripts/backend.js" type="module"></script>
-        <script src="scripts/variables.js" type="module"></script>
-        <script src="scripts/window_utils.js" type="module"></script>
-        <script src="scripts/easteregg.js" type="module"></script>
-        <script type="module">
-            import {fileManager} from "./scripts/file_system.js";
-            import {getCommands} from "./scripts/backend.js";
-            import {getHostname, getUsername, setHostname, setUsername} from "./scripts/constants.js"
-            import {loadMessage} from "./scripts/strings.js";
-            import {terminal} from "./scripts/console.js";
-            import {toggleRainbow, rainbowEnabled} from "./scripts/easteregg.js";
-            import { alertUser, showImage } from "./scripts/window_utils.js";
-            console.log("Psst... run m0akd0g3");
-            let commands = getCommands();
-            //PWA patch
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js');
-            }
-            (async function () {
-            
-                await commands.register("help", "Helps you.", "moakdoge", async function (args) {
-                    for (const command of commands.commands) {
-                        let description = command.description;
+    <div class="topbar" id="topbar">
+    </div>
+    <script src="scripts/strings.js" type="module"></script>
+    <script src="scripts/file_system.js" type="module"></script>
+    <script src="scripts/constants.js" type="module"></script>
+    <script src="scripts/console.js" type="module"></script>
+    <script src="scripts/backend.js" type="module"></script>
+    <script src="scripts/variables.js" type="module"></script>
+    <script src="scripts/window_utils.js" type="module"></script>
+    <script src="scripts/easteregg.js" type="module"></script>
+    <script src="scripts/topbar.js" type="module"></script>
+    <script type="module">
+        import { fileManager } from "./scripts/file_system.js";
+        import { getCommands, createTerminalWindow } from "./scripts/backend.js";
+        import { getHostname, getUsername, setHostname, setUsername } from "./scripts/constants.js"
+        import { loadMessage } from "./scripts/strings.js";
+        import { terminal } from "./scripts/console.js";
+        import { toggleRainbow, rainbowEnabled } from "./scripts/easteregg.js";
+        import { alertUser, showImage } from "./scripts/window_utils.js";
+        import { BarButton } from "./scripts/topbar.js"
 
-                        if (description == undefined) {
-                            continue;
-                        }
+        //CREATING CORE BUTTONS
+        //terminal
+        new BarButton("Terminal", async () => {
+            await createTerminalWindow("Terminal", 80, 80, getCommands());
+        })
+        
 
-                        if (command.hidden) {
-                            continue;
-                        }
-                        await terminal.print(command.name + ": " + description);
-                    }
-                })
+        window.bar = BarButton;
+        console.log("Psst... run m0akd0g3");
+        let commands = getCommands();
+        //PWA patch
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+        (async function () {
 
-                await commands.register("echo", "Echoes your input.", "moakdoge", async function (args) {
-                    let output = args.slice(1).join(" ");
-                    await terminal.print(output);
-                });
+            await commands.register("help", "Helps you.", "moakdoge", async function (args) {
+                for (const command of commands.commands) {
+                    let description = command.description;
 
-    
-                await commands.register("history", "Shows the command history.", "moakdoge", async function (args) {
-                    for (const command of terminal.commandHistory) {
-                        await terminal.print(command);
-                    }
-                })
-
-                await commands.register("whoami", "Tells you a bit about me", "moakdoge", async function (args) {
-                    await terminal.print(await loadMessage("whoami"));
-                });
-
-                await commands.register("languages", "My programming languages", "moakdoge", async function (args) {
-                    let myLangs = {
-                        python: new Date("2023-8-10"),
-                        lua: new Date("2020-11-23"),
-                        "C++": new Date("2025-8-15"),
+                    if (description == undefined) {
+                        continue;
                     }
 
-
-                    for (const [name, date] of Object.entries(myLangs)) {
-                        const now = date;
-                        const month = now.toLocaleString('en-US', { month: 'short' });
-                        const year = now.getFullYear();
-                        await terminal.print("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year));
+                    if (command.hidden) {
+                        continue;
                     }
+                    await terminal.print(command.name + ": " + description);
+                }
+            })
 
-                }, true);
-
-                await commands.register("socials", "My social medias", "moakdoge", async function (args) {
-
-                    let mySocials = {
-                        GitHub: { handle: "@moakdoge", link: "https://github.com/moakdoge", },
-                        YouTube: { handle: "@moakdoge", link: "https://www.youtube.com/@moakdoge" },
-                        Discord: { handle: "@moakdoge", link: "https://discord.com/users/866493074699321354" },
-                        Email: { handle: "root@moakdoge.dev", link: "mailto:root.moakdoge.dev" }
-
-                    };
-
-                    for (const [name, info] of Object.entries(mySocials)) {
-                        const handle = info.handle;
-                        const link = info.link;
-
-                        let output = "%name: [%username](%link)"
-                            .replace("%name", name)
-                            .replace("%username", handle)
-                            .replace("%link", link);
-
-                        await terminal.print(output);
-
-                    }
-                })
-
-                await commands.register("clear", "Clears the terminal", "moakdoge", async function () {
-                    await terminal.clear();
-                    await commands.run("welcome", false);
-                });
+            await commands.register("echo", "Echoes your input.", "moakdoge", async function (args) {
+                let output = args.slice(1).join(" ");
+                await terminal.print(output);
+            });
 
 
-                await commands.register("eval", "Evaluates an input.", "moakdoge", async function (args) {
-                    let fixed = args.slice(1).join(" ");
-                    let val = eval(fixed);
-                    await terminal.print(val?.toString() ?? "No output");
-                })
+            await commands.register("history", "Shows the command history.", "moakdoge", async function (args) {
+                for (const command of terminal.commandHistory) {
+                    await terminal.print(command);
+                }
+            })
 
-                /* filesystem conmands... blech */
-                await commands.register("ls", "Lists files in the current directory", "moakdoge", async function (args) {
-                    let directory = await fileManager._getCurrentDirectory();
-                    if (directory === null) {
-                        await terminal.print("Unable to read the current directory.");
-                        return;
-                    }
+            await commands.register("open-terminal", "Attempts to open a secondary terminal.", "moakdoge", async function (args) {
+                await createTerminalWindow();
 
-                    for (const child of directory.directories ?? []) {
-                        await terminal.print(`**${child.name + "/"}**`);
-                    }
-                    for (const file of directory.files ?? []) {
-                        await terminal.print(file.name);
-                    }
-                });
-                
-                await commands.register("open-window", "Opens a testing window.", "moakdoge", async function (args){
-                    let title = args[1] || "System";
-                    let content = args[2] || "Hello, world! (no content provided)";
-                    await alertUser(title, content);
-                }, true);
+            });
 
-                await commands.register("open-image", "Opens a testing image.", "moakdoge", async function (args){
-                    let title = args[1] || "System";
-                    let url = args[2] || "images/icon-512.png";
-                    await showImage(title, url);
-                }, true);
-                await commands.register("cat", "Prints a file", "moakdoge", async function (args) {
-                    const path = args[1];
-                    if (path === undefined) {
-                        await terminal.print("cat: missing file operand");
-                        return;
-                    }
+            await commands.register("whoami", "Tells you a bit about me", "moakdoge", async function (args) {
+                await terminal.print(await loadMessage("whoami"));
+            });
 
-                    const content = await fileManager.readFile(path);
-                    if (content === null) {
-                        await terminal.print("cat: no such file: " + path);
-                        return;
-                    }
+            await commands.register("languages", "My programming languages", "moakdoge", async function (args) {
+                let myLangs = {
+                    python: new Date("2023-8-10"),
+                    lua: new Date("2020-11-23"),
+                    "C++": new Date("2025-8-15"),
+                }
 
-                    await terminal.print(content, true);
-                });
 
-                const readOnlyFilesystemError = async function (args) {
-                    await terminal.raise(args[0], "Filesystem is read-only.");
+                for (const [name, date] of Object.entries(myLangs)) {
+                    const now = date;
+                    const month = now.toLocaleString('en-US', { month: 'short' });
+                    const year = now.getFullYear();
+                    await terminal.print("%n: since %m, %y".replace("%n", name).replace("%m", month).replace("%y", year));
+                }
+
+            }, true);
+
+            await commands.register("socials", "My social medias", "moakdoge", async function (args) {
+
+                let mySocials = {
+                    GitHub: { handle: "@moakdoge", link: "https://github.com/moakdoge", },
+                    YouTube: { handle: "@moakdoge", link: "https://www.youtube.com/@moakdoge" },
+                    Discord: { handle: "@moakdoge", link: "https://discord.com/users/866493074699321354" },
+                    Email: { handle: "root@moakdoge.dev", link: "mailto:root.moakdoge.dev" }
+
                 };
 
+                for (const [name, info] of Object.entries(mySocials)) {
+                    const handle = info.handle;
+                    const link = info.link;
 
+                    let output = "%name: [%username](%link)"
+                        .replace("%name", name)
+                        .replace("%username", handle)
+                        .replace("%link", link);
 
+                    await terminal.print(output);
 
+                }
+            })
 
-                await commands.registerText("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
-                await commands.registerText("about", "$message about", false, "About me.", "moakdoge");
-                await commands.registerText("projects", "$message projects", false, "Gets my projects", "moakdoge");
-
-                /* Secret commands. You found them.*/
-                await commands.registerText("sudo", "... You're root.");
-                await commands.registerText("ssh", "I wish, man. I'm not that talented.");
-                await commands.registerText("moakdoge", "yep... that's me.");
-                await commands.registerText("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
-                await commands.registerText("reboot", "You really think a browser can reboot your computer?");
-                await commands.registerText("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
-                await commands.register("mkdir", "Creates a directory", "moakdoge", readOnlyFilesystemError, true);
-                await commands.registerText("apt", "This is not Ubuntu!");
-                await commands.registerText("pacman", "This is not Arch! (i use arch btw)");
-                await commands.registerText("dnf", "This is not Fedora!");
-                await commands.registerText("zypper", "This is not openSUSE!");
-                await commands.registerText("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
-                await commands.registerText("xbps-install", "XBPS? What even is that? Who are you?");
-                await commands.registerText("apk", "This is not Alphine! (iSH? Random embedded? Who are you?");
-                await commands.registerText("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
-                await commands.registerText("curl", "Read |wget|, but this won't ever work.");
-                await commands.register("m0akd0g3", "hmmm", "m0akd0g3", async function (args) {
-                    toggleRainbow();
-                    if (!rainbowEnabled) {
-                        await terminal.print("Aww, no more rainbow? Dang.");
-                        
-                    }else{
-                        await terminal.print("# LETS ROCK BABY!!");
-                    }
-                }, false); 
-                await commands.register("cd", "Changes the current directory", "moakdoge", async function (args) {
-                    const path = args[1] ?? "/";
-                    const changed = await fileManager.setDirectory(path);
-                    if (!changed) {
-                        await terminal.print("cd: no such directory: " + path);
-                    }
-                });
-                await commands.register("pwd", "Prints the current directory", "moakdoge", async function () {
-                    await terminal.print(await fileManager.getDirectory());
-                });
-                await commands.register("cp", "Copies a file", "moakdoge", readOnlyFilesystemError, true);
-                await commands.register("mv", "Moves a file", "moakdoge", readOnlyFilesystemError, true);
-                await commands.register("rmdir", "Removes a directory", "moakdoge", readOnlyFilesystemError, true);
-                await commands.register("rm", "Removes a file", "moakdoge", readOnlyFilesystemError, true);
-                await commands.register("touch", "Creates a file", "moakdoge", readOnlyFilesystemError, true);
-                await commands.registerText("kill", "Can't kill anything here, bucko.");
-                await commands.register("chmod", "Changes file permissions", "moakdoge", readOnlyFilesystemError, true);
-                await commands.registerText("ping", "Go do ping on your own terminal.");
-                await commands.registerText("arknight", "rose12344 made me add this. You know who you are.");
-                await commands.createAlias("arknights", "arknight");
-                await commands.createAlias("neofetch", "fastfetch");
-                await commands.createAlias("yay", "pacman");
-                await commands.createAlias("apt-get", "apt");
-                await commands.createAlias("scaturriel", "scatty");
-                await commands.createAlias("scatty-watty", "scatty");
-
-                await commands.registerText("ai-use", `$message ai-use`, true, "How AI was used on this site.", "moakdoge");
-
-                await commands.register("hostname", `Sets or reads your hostname. Defaults to ${getHostname()}.`, "moakdoge", async function (args) {
-                    let newHostName = args[1];
-                    if (newHostName == undefined) {
-                        await terminal.print(`Your current hostname is ${getHostname()}.`);
-                        return;
-                    }
-                    setHostname(newHostName);
-                    await terminal.print(`Fine, I'll change the hostname. Grumble. Your new hostname is ${getHostname()}.`)
-                });
-                await commands.register("username", `Sets or reads your username. Defaults to ${getUsername()}.`, "moakdoge", async function (args) {
-                    let newUser = args[1];
-                    if (newUser == undefined) {
-                        await terminal.print(`Your current username is ${getUsername()}.`);
-                        return;
-                    }
-                    setUsername(newUser);
-                    await terminal.print(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${getUsername()}.`)
-                });
-
-                await commands.register("fastfetch", "Gets some information about this 'OS'.", "moakdoge", async function (args) {
-                    let fixed = await loadMessage("fastfetch");
-
-                    await terminal.print("<pre>" + fixed + "</pre>");
-                })
-
-                await commands.registerText("welcome", "$message welcome", false, "The welcome command.", "moakdoge");
-
-                /* debug commands i may or may not remove */
-                await commands.registerText("formatting-test", "$message formatting-test");
-
-                /* You guys are laughing at me. For sure. I don't care if it works it works*/
+            await commands.register("clear", "Clears the terminal", "moakdoge", async function () {
+                await terminal.clear();
                 await commands.run("welcome", false);
+            });
 
-                
-                
-            })();
-        </script>
+
+            await commands.register("eval", "Evaluates an input.", "moakdoge", async function (args) {
+                let fixed = args.slice(1).join(" ");
+                let val = eval(fixed);
+                await terminal.print(val?.toString() ?? "No output");
+            })
+
+            /* filesystem conmands... blech */
+            await commands.register("ls", "Lists files in the current directory", "moakdoge", async function (args) {
+                let directory = await fileManager._getCurrentDirectory();
+                if (directory === null) {
+                    await terminal.print("Unable to read the current directory.");
+                    return;
+                }
+
+                for (const child of directory.directories ?? []) {
+                    await terminal.print(`**${child.name + "/"}**`);
+                }
+                for (const file of directory.files ?? []) {
+                    await terminal.print(file.name);
+                }
+            });
+
+            await commands.register("open-window", "Opens a testing window.", "moakdoge", async function (args) {
+                let title = args[1] || "System";
+                let content = args[2] || "Hello, world! (no content provided)";
+                await alertUser(title, content);
+            }, true);
+
+            await commands.register("open-image", "Opens a testing image.", "moakdoge", async function (args) {
+                let title = args[1] || "System";
+                let url = args[2] || "images/icon-512.png";
+                await showImage(title, url);
+            }, true);
+            await commands.register("cat", "Prints a file", "moakdoge", async function (args) {
+                const path = args[1];
+                if (path === undefined) {
+                    await terminal.print("cat: missing file operand");
+                    return;
+                }
+
+                const content = await fileManager.readFile(path);
+                if (content === null) {
+                    await terminal.print("cat: no such file: " + path);
+                    return;
+                }
+
+                await terminal.print(content, true);
+            });
+
+            const readOnlyFilesystemError = async function (args) {
+                await terminal.raise(args[0], "Filesystem is read-only.");
+            };
+
+
+
+
+
+            await commands.registerText("source", "$message source", false, "Gets info about this site's source.", "moakdoge");
+            await commands.registerText("about", "$message about", false, "About me.", "moakdoge");
+            await commands.registerText("projects", "$message projects", false, "Gets my projects", "moakdoge");
+
+            /* Secret commands. You found them.*/
+            await commands.registerText("sudo", "... You're root.");
+            await commands.registerText("ssh", "I wish, man. I'm not that talented.");
+            await commands.registerText("moakdoge", "yep... that's me.");
+            await commands.registerText("scatty", "go check out my friend scatty: [scatty](https://scatty.ing)");
+            await commands.registerText("reboot", "You really think a browser can reboot your computer?");
+            await commands.registerText("exit", "I would've made it close the tab. But for some reason browsers don't allow that, so this is what you get.");
+            await commands.register("mkdir", "Creates a directory", "moakdoge", readOnlyFilesystemError, true);
+            await commands.registerText("apt", "This is not Ubuntu!");
+            await commands.registerText("pacman", "This is not Arch! (i use arch btw)");
+            await commands.registerText("dnf", "This is not Fedora!");
+            await commands.registerText("zypper", "This is not openSUSE!");
+            await commands.registerText("emerge", "Huh... A gentoo user. I didn't think you guys existed. Regardless, this is not gentoo.");
+            await commands.registerText("xbps-install", "XBPS? What even is that? Who are you?");
+            await commands.registerText("apk", "This is not Alphine! (iSH? Random embedded? Who are you?");
+            await commands.registerText("wget", "Nope. This is not a real terminal. I mean, you have |eval|; You can use that to use fetch, but otherwise this is a nogo.");
+            await commands.registerText("curl", "Read |wget|, but this won't ever work.");
+            await commands.register("m0akd0g3", "hmmm", "m0akd0g3", async function (args) {
+                toggleRainbow();
+                if (!rainbowEnabled) {
+                    await terminal.print("Aww, no more rainbow? Dang.");
+
+                } else {
+                    await terminal.print("# LETS ROCK BABY!!");
+                }
+            }, false);
+            await commands.register("cd", "Changes the current directory", "moakdoge", async function (args) {
+                const path = args[1] ?? "/";
+                const changed = await fileManager.setDirectory(path);
+                if (!changed) {
+                    await terminal.print("cd: no such directory: " + path);
+                }
+            });
+            await commands.register("pwd", "Prints the current directory", "moakdoge", async function () {
+                await terminal.print(await fileManager.getDirectory());
+            });
+            await commands.register("cp", "Copies a file", "moakdoge", readOnlyFilesystemError, true);
+            await commands.register("mv", "Moves a file", "moakdoge", readOnlyFilesystemError, true);
+            await commands.register("rmdir", "Removes a directory", "moakdoge", readOnlyFilesystemError, true);
+            await commands.register("rm", "Removes a file", "moakdoge", readOnlyFilesystemError, true);
+            await commands.register("touch", "Creates a file", "moakdoge", readOnlyFilesystemError, true);
+            await commands.registerText("kill", "Can't kill anything here, bucko.");
+            await commands.register("chmod", "Changes file permissions", "moakdoge", readOnlyFilesystemError, true);
+            await commands.registerText("ping", "Go do ping on your own terminal.");
+            await commands.registerText("arknight", "rose12344 made me add this. You know who you are.");
+            await commands.createAlias("arknights", "arknight");
+            await commands.createAlias("neofetch", "fastfetch");
+            await commands.createAlias("yay", "pacman");
+            await commands.createAlias("apt-get", "apt");
+            await commands.createAlias("scaturriel", "scatty");
+            await commands.createAlias("scatty-watty", "scatty");
+
+            await commands.registerText("ai-use", `$message ai-use`, true, "How AI was used on this site.", "moakdoge");
+
+            await commands.register("hostname", `Sets or reads your hostname. Defaults to ${getHostname()}.`, "moakdoge", async function (args) {
+                let newHostName = args[1];
+                if (newHostName == undefined) {
+                    await terminal.print(`Your current hostname is ${getHostname()}.`);
+                    return;
+                }
+                setHostname(newHostName);
+                await terminal.print(`Fine, I'll change the hostname. Grumble. Your new hostname is ${getHostname()}.`)
+            });
+            await commands.register("username", `Sets or reads your username. Defaults to ${getUsername()}.`, "moakdoge", async function (args) {
+                let newUser = args[1];
+                if (newUser == undefined) {
+                    await terminal.print(`Your current username is ${getUsername()}.`);
+                    return;
+                }
+                setUsername(newUser);
+                await terminal.print(`Fine, I'll change the username. Why you care? Don't ask me. Your new name is ${getUsername()}.`)
+            });
+
+            await commands.register("fastfetch", "Gets some information about this 'OS'.", "moakdoge", async function (args) {
+                let fixed = await loadMessage("fastfetch");
+
+                await terminal.print("<pre>" + fixed + "</pre>");
+            })
+
+            await commands.registerText("welcome", "$message welcome", false, "The welcome command.", "moakdoge");
+
+            /* debug commands i may or may not remove */
+            await commands.registerText("formatting-test", "$message formatting-test");
+
+            /* You guys are laughing at me. For sure. I don't care if it works it works*/
+            await commands.run("welcome", false);
+
+
+
+        })();
+    </script>
 
 </body>
 

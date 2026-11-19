@@ -6,6 +6,7 @@
     --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
     --font-size: 1vw;
     --mobile-visible: inline; 
+    --hover-scale: 1.15;
     font-size: 1rem;
 }
 
@@ -283,4 +284,46 @@ body::after {
     margin: 5px;
     z-index: 999;
     display: var(--mobile-visible);
+}
+
+
+.topbar {
+display: flex; /* Required for justify-content and proper child sizing */
+    align-items: flex-end;
+    justify-content: flex-start;
+    height: 10%;
+    width: 100%;
+    top: -7.5%;
+    left: 0%;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 8px;
+    background-color: #0000003d;
+    backdrop-filter: blur(5px);
+    position: fixed;
+    z-index: 99;
+}
+
+.app-text {
+    height: 25%; /* Matches 100% of .topbar's height */
+    display: flex;
+    align-items: flex-end; /* Vertically centers the text inside the green box */
+    transition: ease-in-out 0.05s;
+    background-color: var(--window-color);
+    margin: 8px;
+    padding: 2px;
+    transition: linear 0s;
+}
+
+.app-text span {
+    color:var(--text-color);
+    z-index: 999999;
+    user-select: none;
+}
+
+
+.app-text:hover {
+    border-color: var(--text-color);
+    border-style: dashed;
+    padding: 0px;
 }

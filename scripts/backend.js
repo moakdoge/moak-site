@@ -1,51 +1,23 @@
 import { terminal, initializeTerminal, ConsoleObject } from "./console.js"
 import { CommandManager } from './commands.js';
 import {getMobile} from "./constants.js";
-import { createWindow, registerWindow } from "./window_utils.js";
-const terminalLog = document.getElementById("term-log");
-const inputPrompt = document.getElementById("input-prompt");
-const inputPromptText = document.getElementById("prompt-text");
-const commandInput = document.getElementById("command-input");
-let attemptsToOpen = 0;
-
-
-
-
-
-
-
-
-
-document.addEventListener('click', async (e) => {
-    const cmdElement = e.target.closest('.command-text');
-    if (cmdElement) {
-        e.preventDefault();
-        const command = cmdElement.dataset.command || cmdElement.textContent;
-        commandInput.value = String(command).trim();
-        if (getMobile()) {
-            await scrollToBottom();
-        }
-        await terminal.prompt(commandInput.value); 2
-        await terminal.initPrompt();
-    }
-})
-
-
-
+import { formatString } from "./strings.js";
+import { createWindow, registerWindow, alertUser } from "./window_utils.js";
 /**
  * Dynamically creates, mounts, and initializes a new terminal window.
  *
  * @param {ConsoleObject} terminal
  * @param {number} [options.x=80] - Initial X position.
  * @param {number} [options.y=80] - Initial Y position.
+ * @param {CommandManager | null} [copyCommands] - If you want your own set of commands or just to use the default (pass in a commands object to copy from)
  * @returns {{ windowElement: HTMLElement, win: Object }} The created DOM element and registered window instance.
  */
-async function createTerminalWindow({
+export async function createTerminalWindow({
     x = 80,
     y = 80,
     title = "Terminal",
+    copyCommands = null
 } = {}) {
-    let attemptsToClose = 0;
 
     // 1. Create the base window
     const windowElement = await createWindow(x, y, title);
@@ -85,24 +57,20 @@ async function createTerminalWindow({
     const commandInput = windowElement.querySelector(".command-box");
     let terminal = initializeTerminal(terminalLog,inputPrompt, windowElement, inputPromptText, commandInput, submitPrompt);
     // 4. Register window & custom close behavior
-    const win = registerWindow(windowElement, titleBar, closeButton, () => {
-        attemptsToClose += 1;
-        if (attemptsToClose >= 3) {
-            alertUser("moakdoge", formatString("Go check out scatty at [scatty.ing](https://scatty.ing). Also, please stop trying to close this."));
-            attemptsToClose = 0;
-            return false;
-        }
-        alertUser("System", "Why would you try to close this? ");
-        return false;
-    });
+    const win = registerWindow(windowElement, titleBar, closeButton);
+
+    
     let commands = new CommandManager(terminal);
+    if (copyCommands != null) {
+        commands.commands = copyCommands.commands;
+    }
     windowElement._commands  = commands;
 
 
     // 6. Handle mobile layout & viewport listeners
     if (getMobile()) {
         windowElement.style.width = "100%";
-        windowElement.style.height = "95%";
+        windowElement.style.height = "80%";
         document.documentElement.style.setProperty("--mobile-visible", "none");
         terminal.resizeLog();
 
@@ -119,6 +87,20 @@ async function createTerminalWindow({
     }
 
 })
+    windowElement.addEventListener('click', async (e) => {
+        const cmdElement = e.target.closest('.command-text');
+        if (cmdElement) {
+            e.preventDefault();
+            const command = cmdElement.dataset.command || cmdElement.textContent;
+            commandInput.value = String(command).trim();
+            if (getMobile()) {
+                await terminal.toBottom();
+            }
+            await terminal.prompt(commandInput.value); 2
+            await terminal.initPrompt();
+        }
+    })
+
 
     return { windowElement, win, terminal, commands};
 }
