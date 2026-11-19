@@ -56,7 +56,7 @@ export function registerWindow(windowElement, titleBar, closeButton, closeCallba
     });
 
     function focusWindow() {
-        //windowElement.style.zIndex = 1;
+        windowElement.style.zIndex = 2;
         windowElement.classList.add("focused");
         windowElement.classList.remove("unfocused")
         for (const otherWindow of windowElements) {
@@ -65,6 +65,7 @@ export function registerWindow(windowElement, titleBar, closeButton, closeCallba
             }
             otherWindow.classList.remove("focused");
             otherWindow.classList.add("unfocused");
+            otherWindow.zIndex = 0;
         }
     }
 

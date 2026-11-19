@@ -62,7 +62,6 @@ export async function createTerminalWindow(
     
     let commands = new CommandManager(terminal);
     if (copyCommands) {
-        console.log("copy")
         commands.commands = copyCommands.commands;
     }
     

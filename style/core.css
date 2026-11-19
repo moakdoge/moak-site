@@ -1,0 +1,335 @@
+:root {
+    --background-color: rgb(9, 46, 29);
+    --text-color: #00ff22;
+    --output-color: #ffffff;
+    --window-color: #14141479;
+    --font: 'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
+    --font-size: 1vw;
+    --mobile-visible: inline; 
+    --hover-scale: 1.15;
+    font-size: 1rem;
+}
+
+
+html::-webkit-scrollbar {
+    display: none;
+}
+@property --dot-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: rgba(0, 255, 136, 0.15);
+}
+@property --dot-size {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 4px;
+}
+
+@keyframes bg-move {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 240px 240px;
+    }
+}
+
+@keyframes bg-color {
+    from {
+        --dot-color: rgba(0, 255, 136, 0.15);
+        --dot-size: 1px;
+    }
+
+    to {
+        --dot-color: rgba(6, 180, 99, 0.185);
+        --dot-size: 6px;
+    }
+}
+
+.text {
+    font-family: inherit;
+    color: var(--text-color);
+}
+
+.window.focused {
+    backdrop-filter: blur(8px);    
+}
+
+.window.unfocused {
+    border: var(--background-color);
+}
+
+
+#main-body {
+    width: 120%;
+    height: 120%;
+    left: -20%;
+    top: -20%;
+    position: absolute;
+    font-family: var(--font);
+    overflow-x: hidden;
+    overflow: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    background-image: 
+    radial-gradient(
+        var(--dot-color) 0,
+        var(--dot-color) var(--dot-size),
+        transparent calc(var(--dot-size) + 1px)
+    );
+    background-size: 24px 24px;
+    animation: bg-move 5s linear infinite, bg-color 10s linear infinite alternate;
+    overscroll-behavior: none;
+    position: fixed;
+    touch-action: none;
+}
+
+
+
+.window {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    max-height: calc(100dvh - 16px);
+    width: 80%;
+    height: 80%;
+    border-color: var(--text-color);
+    border-radius: 2px;
+    background-color: var(--window-color);
+    border: var(--text-color);
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding:8px;
+
+    
+}
+
+.title-bar {
+    height:40px;
+    flex: 0 0 40px;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    user-select: none;
+    padding-left:2%;
+    padding-right:1%;
+}
+
+.close-button {
+    background-color: #00000022;
+    font-family: inherit;
+    color:var(--text-color);
+    appearance: none;
+    border: var(--text-color);
+    border-style: solid;
+    text-decoration: none;
+    align-self: center;
+    transition: 0.1s linear;
+}
+
+.close-button:hover {
+    background-color: var(--window-color);
+    cursor:pointer;
+}
+.title-bar:hover {
+    cursor: grab;
+}
+
+.title-bar {
+    touch-action: none;
+}
+
+.title-bar p {
+    font-family: inherit;
+    color: var(--text-color);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.content h1,
+.content h2,
+.content h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.term-log {
+    display: flex;
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    max-height: 100vh;
+    box-sizing: border-box;
+    align-items: flex-start;
+    flex-direction: column;
+    overflow-x: scroll;   
+    overflow-y: auto;
+    padding: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.term-log::-webkit-scrollbar {
+    display: none;
+}
+
+.log {
+    width: 100%;
+    max-width: fit-content;
+    min-width: 0;
+    height: fit-content;
+    overflow-wrap: none;
+    overflow-x: visible;
+}
+
+.content,
+.content pre {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.content pre {
+    display: block;
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+    overflow-wrap: normal;
+    white-space: pre;
+}
+.content {
+    color: var(--output-color);
+}
+
+.ascii-art {
+    white-space: pre;
+    overflow-wrap: normal;
+    font-family: inherit;
+    display: var(--mobile-visible);
+}
+
+.colored-text {
+    color: var(--text-color);
+}
+
+.prompt {
+    color: var(--text-color);
+    padding: 0px;
+}
+.command-box {
+    background-color: #00000000;
+    color: var(--text-color);
+    font: inherit;
+    appearance: none;
+    border: none;
+    outline: none;
+    width: 1ch;
+    padding: 0;
+    
+}
+
+.command-text {
+    text-decoration: underline;
+    color: red;
+}
+
+.command-text:hover {
+    cursor: pointer
+}
+
+.command-box:focus {
+    cursor: none;
+}
+
+
+.info-section {
+    position: absolute;
+    min-width: 40px;
+    height: auto;
+    overflow: hidden;
+
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    background-color: #e9ecea00;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: end;
+}
+
+.info-section p {
+    color: #fdfdfd27;
+    margin: 5px;
+    z-index: 999;
+    display: var(--mobile-visible);
+}
+
+
+.topbar {
+display: flex; /* Required for justify-content and proper child sizing */
+    align-items: flex-end;
+    justify-content: flex-start;
+    height: 10%;
+    width: 100%;
+    top: -7.5%;
+    left: 0%;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 8px;
+    background-color: #0000003d;
+    backdrop-filter: blur(5px);
+    position: fixed;
+    z-index: 99;
+}
+
+.app-text {
+    height: 25%; /* Matches 100% of .topbar's height */
+    display: flex;
+    align-items: flex-end; /* Vertically centers the text inside the green box */
+    transition: ease-in-out 0.05s;
+    background-color: var(--window-color);
+    margin: 8px;
+    padding: 2px;
+    transition: linear 0s;
+}
+
+.app-text span {
+    color:var(--text-color);
+    z-index: 999999;
+    user-select: none;
+}
+
+
+.app-text:hover {
+    border-color: var(--text-color);
+    border-style: dashed;
+    padding: 0px;
+}
+
+iframe {
+    border: none;
+    text-decoration: none;
+}
+

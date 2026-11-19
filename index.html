@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style/core.css">
 <html>
 <title>moakdoge.dev</title>
 <meta name="title" content="moakdoge.dev" />
@@ -93,7 +93,7 @@
     import { getHostname, getUsername, setHostname, setUsername } from "./scripts/constants.js";
     import { loadMessage } from "./scripts/strings.js";
     import { toggleRainbow, rainbowEnabled } from "./scripts/easteregg.js";
-    import { alertUser, showImage } from "./scripts/window_utils.js";
+    import { alertUser, showImage, createWindow } from "./scripts/window_utils.js";
     import { BarButton } from "./scripts/topbar.js";
 
     let commands = getCommands();
@@ -109,6 +109,38 @@
         );
         await term.commands.run("welcome", false);
     });
+
+    /** @type {BarButton} */
+    let settings=new BarButton("Settings", async () => {
+        let win = await createWindow(20, 40, "Settings", () => {
+            return true;
+        });
+
+        //create iframe
+        let frame = document.createElement("iframe");
+        frame.src = "/settings.html";
+        frame.style.width = "100%";
+        frame.style.height = "100%";
+        win.appendChild(frame);
+
+
+    });
+
+        let tst=new BarButton("Test Window", async () => {
+        let win = await createWindow(20, 40, "Test Window", () => {
+            return true;
+        });
+
+        //create iframe
+        let frame = document.createElement("iframe");
+        frame.src = "/test.html";
+        frame.style.width = "100%";
+        frame.style.height = "100%";
+        win.appendChild(frame);
+
+
+    });
+    tst.callback();
 
     window.bar = BarButton;
     console.log("Psst... run m0akd0g3");

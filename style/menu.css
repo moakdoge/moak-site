@@ -1,0 +1,54 @@
+:root {
+    --text-color:#00ff22;
+    --hovered-text-color:#1da830;
+    --window-color:  #14141479;
+    --section-color: #1f161679;
+    --font:'JetBrains Mono', 'JetBrainsMono Nerd Font', 'Fira Code', monospace;
+}
+.interface {
+    background-color: #00000022;
+    font-family: var(--font);
+    color:var(--text-color);
+    appearance: none;
+    border: var(--text-color);
+    border-style: solid;
+    text-decoration: none;
+    align-self: center;
+    transition: 0.1s linear;
+    margin: 4px;
+}
+.interface:hover:not(:disabled) {
+    cursor: pointer;
+    border: var(--hovered-text-color);
+    border-style: solid;
+    color: var(--hovered-text-color);
+}
+
+.interface:disabled{
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: #00000022;
+}
+
+h1, h2, h3, h4, span, p {
+    font-family: var(--font);
+    color: var(--text-color);
+}
+
+.input {
+    width: 70%;
+}
+
+.section {
+    display: flex;
+    flex-direction: row;
+}
+
+
+.switch * {
+    padding: 4px;
+}
+
+.switch.enabled button.confirm {
+    cursor: not-allowed;
+}

@@ -327,3 +327,8 @@ display: flex; /* Required for justify-content and proper child sizing */
     border-style: dashed;
     padding: 0px;
 }
+
+iframe {
+    border: none;
+    text-decoration: none;
+}
